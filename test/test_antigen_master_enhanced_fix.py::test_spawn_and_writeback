@@ -1,0 +1,57 @@
+
+==================================== ERRORS ====================================
+__________ ERROR collecting test/test_antigen_master_enhanced_fix.py ___________
+test/test_antigen_master_enhanced_fix.py:269: in <module>
+    raise AssertionError("No antigen labels seen after AntigenMaster steps - check spawn_agent/step behaviour and space writeback.")
+E   AssertionError: No antigen labels seen after AntigenMaster steps - check spawn_agent/step behaviour and space writeback.
+------------------------------- Captured stdout --------------------------------
+
+AntigenMaster / Space diagnostics:
+ world type: <class 'scan_master.space.Space'>
+ world has add_label?: True
+ world has get_labels?: True
+ world has snapshot?: True
+ world has get_agents?: True
+
+AntigenMaster signature: (space, feedback=None, rng: Union[random.Random, NoneType] = None, config: Union[Dict[str, Any], NoneType] = None)
+AntigenMaster instance created: <cell_master.masters.antigen_master.AntigenMaster object at 0x7fef61c638e0>
+AntigenMaster callable attrs sample: ['agents', 'config', 'feedback', 'list_agents', 'reset', 'rng', 'space', 'spawn_agent', 'step']
+spawned_ids (if any): ['ag_1765679044669_1_4f69d9']
+T01: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T02: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T03: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T04: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T05: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T06: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T07: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T08: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T09: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T10: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T11: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+T12: step_attempts = [('step(region_id)', True)]
+  labels=0 agents=1 internal_agents_sample=[{'id': 'ag_1765679044669_1_4f69d9', 'coord': (0.0, 0.0), 'viral_load': 1.0, 'proto': {'amount': 1.0, 'type': 'ANTIGEN_PARTICLE', 'epitopes': [{'seq': 'PEPX'}]}, 'state': 'active'}]
+
+Assertions summary:
+ seen_antigen_release: False
+ seen_pmhc_label:      False
+ dc_handled:           False
+_______________ ERROR collecting test/test_receptor_registry.py ________________
+ImportError while importing test module '/home/hu/MacroImmunet_demo/test/test_receptor_registry.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+test/test_receptor_registry.py:5: in <module>
+    from .label_names import classify_label_item
+E   ImportError: attempted relative import with no known parent package
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+2 error in 0.13 seconds

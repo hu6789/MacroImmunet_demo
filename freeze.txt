@@ -1,0 +1,159 @@
+MacroImmunet – Label Center
+Phase 1 Interface Freeze Declaration
+
+Status: Phase 1 completed
+Applicable versions: v0.1.0-alpha and later
+Freeze level: Semantic Freeze
+
+Purpose of the Freeze
+
+The Label Center is the only global state hub in MacroImmunet. It is responsible for:
+
+continuous fields
+
+sparse labels / particles
+
+ownership management
+
+tick-level transactional consistency
+
+During Phase 1, its temporal semantics, conflict resolution rules, and consistency guarantees were systematically verified through tests.
+
+Therefore, from the completion of Phase 1 onward:
+
+The Label Center is treated as a long-term stable infrastructure layer.
+All subsequent modules (ScanMaster, CellMaster, plugins) must adapt to its semantics, rather than driving changes in its behavior.
+
+Scope of the Freeze
+
+2.1 What is frozen: externally observable semantics
+
+Tick-level transactional semantics (Step 5.12)
+
+All write operations (emit, claim, release, modify):
+
+are not visible within the same tick
+
+become effective only after apply() at the tick boundary
+
+Within a single tick:
+
+repeated reads return a consistent view
+
+writes do not affect reads
+
+Guarantee:
+The Label Center behaves like a snapshot-consistent system within each tick.
+
+Hysteresis and cooldown semantics (Step 5.13)
+
+Reclaim, merge, and prune operations:
+
+do not occur in the triggering tick
+
+are constrained by cooldown and hysteresis rules
+
+This prevents labels or fields from oscillating across adjacent ticks.
+
+Guarantee:
+State transitions have temporal inertia rather than instantaneous flips.
+
+Ownership conflict arbitration semantics (Step 5.14)
+
+Within the same tick:
+
+multiple claims on the same label are resolved deterministically
+
+For owned labels:
+
+emits are ignored
+
+a released label cannot be immediately re-claimed
+
+Ownership transfer:
+
+only takes effect across ticks
+
+Guarantee:
+There is no preemptive or race-based ownership behavior.
+
+2.2 What is not frozen (allowed to change)
+
+The following aspects may be modified or optimized as long as the above semantics are preserved:
+
+internal data structures
+
+storage and indexing strategies
+
+performance optimizations
+
+internal logging and debug hooks
+
+non-semantic API organization
+
+Contract for Upper Layers
+
+3.1 ScanMaster and CellMaster
+
+They must not:
+
+assume that writes take effect immediately
+
+rely on ownership changes within the same tick
+
+They must:
+
+interact with the Label Center via intents or requests
+
+tolerate emits or claims being ignored or delayed
+
+3.2 Plugins and extensions
+
+Plugins must not:
+
+bypass the Label Center to modify global state directly
+
+assume immediate visibility of their own writes
+
+assume ownership can be preempted
+
+Plugins may:
+
+read summaries or snapshots
+
+generate intents
+
+observe effects in subsequent ticks
+
+Conclusion:
+Plugins are sources of strategy, not sources of state.
+
+Freeze Level Definition
+
+This freeze is a semantic freeze.
+
+This means:
+
+behavioral meaning remains stable
+
+conflict resolution rules remain stable
+
+temporal consistency guarantees remain stable
+
+It does not guarantee that:
+
+API names remain unchanged
+
+internal implementations remain unchanged
+
+Phase 1 Closure
+
+At this point, the Label Center:
+
+has passed comprehensive unit and boundary tests
+
+is stable under concurrent dependencies from multiple modules
+
+serves as a solid foundation for Phase 2 integration and plugin systems
+
+Phase 1 is formally closed.
