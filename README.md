@@ -161,3 +161,6 @@ CONTRIBUTING.md & CODE_OF_CONDUCT.md
 LICENSE (MIT recommended)
 
 small EXAMPLES.md showing simple run commands and demo flows
+
+Note: Some inline comments are bilingual due to development environment constraints during early prototyping.
+Some refactoring and consistency checks were assisted by an AI-based coding assistant.
