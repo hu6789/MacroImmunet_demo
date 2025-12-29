@@ -16,7 +16,7 @@ scan_master/ — Scan and node generation logic (default implementations).
 
 cell_master/ — CellMaster scaffold, behaviour library (reference implementations).
 
-test/ — Extensive pytest suite verifying Phase1 semantics (Step5.1–5.14).
+test/ — Extensive pytest suite verifying Phase1 semantics (Step1–5.14).
 
 tools/, demo scripts and small utilities.
 
