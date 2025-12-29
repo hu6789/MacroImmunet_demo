@@ -146,7 +146,7 @@ Title: v0.1.0-alpha — LabelCenter frozen (Phase 1 complete)
 Body:
 Phase 1 complete: LabelCenter semantics frozen. This release provides a transaction-consistent, ownership-aware Label Center for spatial immunological orchestration, along with Scan/Cell scaffolding and a comprehensive test suite (Steps 5.1–5.14). Phase 2 will introduce plugin contracts (InternalNet, PerCellEngine, VirusSkill, pMHC, AntibodyEffect, TherapeuticAgent, SIO/HIR) to allow pluggable decision & effect layers.
 
-Short social / project blurb (for posting)
+Short social / project blurb 
 
 MacroImmunet_demo v0.1.0-alpha: Phase 1 complete — a transactionally consistent, ownership-aware Label Center for immune orchestration. We’ve frozen semantics (tick atomicity, ownership, hysteresis, deterministic arbitration) and prepared plugin contracts for Phase 2. Repo: <your-repo-url> — PRs and collaborators welcome!
 
@@ -158,7 +158,6 @@ docs/plugins.md — plugin spec (base classes + Null implementations)
 
 CONTRIBUTING.md & CODE_OF_CONDUCT.md
 
-LICENSE (MIT recommended)
 
 small EXAMPLES.md showing simple run commands and demo flows
 
