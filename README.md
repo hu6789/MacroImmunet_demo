@@ -1,165 +1,237 @@
-MacroImmunet_demo — Phase 1 (Label Center)
+# MacroImmunet Demo
 
-Research demo: a semantically explicit immune orchestration layer (Label Center) + minimal Scan/Cell orches辑 for integration tests.
+## A macro-scale immune system simulation framework
 
-Status: v0.1.0-alpha (Phase 1 complete — Label Center frozen)
+**MacroImmunet** is a modular, event-driven *research demo* for simulating immune responses at the **tissue / organ scale**.
+Rather than reproducing full single-cell biophysics, it explores **how immune behavior emerges from structured coordination layers** acting over spatial fields.
 
-One-liner
+At its core, MacroImmunet treats the immune system as a **control system**:
+fields are sensed, events are prioritized, decisions are coordinated, and actions are selectively executed.
 
-MacroImmunet_demo implements a transaction-consistent, ownership-aware Label Center for spatial immune simulation and a lightweight Scan/Cell orchestration scaffold — designed as a stable infra layer for plugin-driven decision modules.
+This demo is **not** a wet-lab–faithful simulator. Instead, it is designed to provide:
 
-What’s in this repo (short)
+* a **clear architectural separation** between sensing, decision, and execution;
+* a **scalable control abstraction** for heterogeneous immune populations;
+* a **plugin-ready sandbox** for future high-fidelity cell models, signaling networks, and learning modules.
 
-label_center/ — LabelCenterBase and API (transactional field, ownership, cooldown/hysteresis, deterministic conflict arbitration). Frozen semantics for Phase 1.
+If you are interested in *how immune dynamics can be organized, not just simulated*, this repository is for you.
 
-scan_master/ — Scan and node generation logic (default implementations).
+---
 
-cell_master/ — CellMaster scaffold, behaviour library (reference implementations).
+## Conceptual Overview
 
-test/ — Extensive pytest suite verifying Phase1 semantics (Step1–5.14).
+MacroImmunet models immunity as a **multi-layer control pipeline** operating over a spatial grid:
 
-tools/, demo scripts and small utilities.
+```
+Field / Label Layer   (what exists)
+↓
+Scan Master           (what is happening?)
+↓
+Cell Master           (what should immune cells do?)
+↓
+Per-Cell Engine       (how exactly is it executed?)
+```
 
-Phase 1 — Completed (what we verified)
+Each layer has a **single responsibility** and trades biological detail for:
 
-Phase 1 focused on building a stable, test-locked Label Center and proving its semantics.
+* computational tractability,
+* explicit decision boundaries,
+* and replaceability via plugins.
 
-Completed and tested items (key highlights):
+---
 
-Tick-level transaction semantics (Step5.12)
+## Repository Structure
 
-Writes (intents) are staged and only become visible after apply()/tick boundary.
+```
+MacroImmunet_demo/
+├── core/
+│   ├── label_center/      # Field + label (particle) state management
+│   ├── scan_master/       # Event detection & spatial attention
+│   ├── cell_master/       # Immune decision & intent generation
+│   ├── internal_net/      # Signaling / node-edge behavior network (stub)
+│   └── per_cell/          # High-fidelity single-cell executor (interface)
+│
+├── env/                   # Grid, fields, and simulation environment
+├── utils/                 # Shared helpers: scoring, sampling, logging
+│
+├── test/
+│   ├── step7_*/           # Incremental architecture & contract tests
+│   └── integration/       # End-to-end demo scenarios
+│
+├── demo/                  # Minimal runnable examples
+└── README.md
+```
 
-Reads inside a tick are snapshot-consistent.
+---
 
-Ownership & cooldown (Step5.7 / Step5.13)
+## Core Modules Explained
 
-claim / release semantics.
+### 1. Label Center (State / Field Layer)
 
-claim_cooldown prevents immediate re-claim; same-tick reclaims are disallowed.
+**Biological analogy**: extracellular environment, antigen and cytokine distributions
+**Role**: *What exists right now?*
 
-Hysteresis / anti-thrashing (Step5.13)
+Responsibilities:
 
-Labels cannot oscillate across adjacent ticks; pruning and re-emission follow time-gated rules.
+* Maintain **continuous spatial fields**
 
-Deterministic conflict arbitration (Step5.14)
+  * antigen density
+  * cytokine concentrations
+  * danger / stress signals
+* Maintain **discrete labels / super-particles**
 
-Same-tick conflicting claims resolved deterministically (first-come wins).
+  * aggregated antigen sources
+  * events and hotspots
+* Handle state mechanics:
 
-Owned labels prevent library emits; release does not retroactively change same-tick outcomes.
+  * particle ↔ field conversion
+  * decay (half-life), diffusion
+  * merge / split with hysteresis
+  * ownership rules to prevent double counting
 
-Field label lifecycle
+This layer is intentionally **passive**:
+it never decides *what should happen*, only records *what exists*.
 
-Emission, merging, decay, prune rules verified (Step5.8, Step5.9).
+---
 
-Test coverage
+### 2. Scan Master (Event Detection Layer)
 
-Tests for Step5.1 → Step5.14 in test/ assert the above semantics.
+**Biological analogy**: innate immune sensing, tissue surveillance
+**Role**: *Where should attention be paid?*
 
-Result: Label Center is now a reliable infra layer — behavior is specified by tests and can be safely depended on by higher layers.
+Responsibilities:
 
-What Phase 1 does not provide (current limitations)
+* Periodically scan **grid summaries** from the Label Center
+* Detect salient events:
 
-No high-fidelity per-cell ODE/kinetics (PerCell engine is scaffolded but not implemented).
+  * antigen hotspots
+  * rapid antigen increases
+  * death or stress spikes
+* Rank regions using configurable **score functions**
 
-Behaviour library is a reference set — intended to be replaced by plugin-backed InternalNet in Phase 2.
+  * density
+  * temporal delta
+  * recency / novelty
+* Emit **node inputs** for downstream decision layers
 
-Antibody/B-cell dynamics are not modelled beyond a placeholder API; antibody is currently planned as a field-level effect.
+Scan Master answers *"what is happening, and where"* —
+without prescribing actions.
 
-SIO/HIR (macro controllers) are not implemented — only the contract is defined.
+---
 
-No GUI / visualization beyond textual demos.
+### 3. Cell Master (Cellular Decision Layer)
 
-These are deliberate choices: Phase 1 froze semantics before adding complexity.
+**Biological analogy**: immune coordination, activation thresholds, clonal logic
+**Role**: *What should immune cells do?*
 
-Roadmap (Phase 2 — integration & pluginization)
+Responsibilities:
 
-Planned high-level steps (Phase 2, Phase 3 follow):
+* Receive node inputs from Scan Master
+* Batch-handle immune cells by:
 
-Phase 2 (integration):
+  * cell type
+  * spatial region
+  * genotype / internal state strata
+* Apply decision logic:
 
-Introduce plugin contracts (InternalNet, PerCellEngine, VirusSkill, pMHC, AntibodyEffect, TherapeuticAgent, SIO/HIR).
+  * gene judges / gating rules
+  * InternalNet signaling evaluation
+* Convert activations into **structured intents**:
 
-Provide PluginBase and NullPlugin placeholders; allow pluggable decision layers.
+  * kill / migrate / proliferate
+  * cytokine secretion
+  * differentiation or memory flags
 
-Integration tests: Scan → Cell → LabelCenter workflows; plugin registration & invocation tests.
+Cell Master **does not execute biology**.
+It produces *intent packages* that can later be executed at different fidelities.
 
-Phase 3 (extensions & models):
+---
 
-Concrete InternalNet implementations, PerCell ODE-based engines.
+### 4. InternalNet (Immune Signaling Network)
 
-Antigen / virus skill library and drug intervention modules.
+**Biological analogy**: intracellular signaling pathways
+**Role**: *How does signal become behavior?*
 
-B-cell & antibody module (field-level antibody models + simple kinetics).
+Current status: **lightweight stub**
 
-SIO/HIR policy modules and simple demonstration strategies.
+Planned responsibilities:
 
-Quick start (for developers)
-# setup (python 3.8+)
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt    # (create as needed)
+* Node–edge signaling propagation
+* Behavior activation with priorities
+* Adaptive thresholds or learned policies
 
-# run unit tests
-python3 -m pytest test/test_step5_12_apply_commits_atomically.py
-# or run full test suite
-python3 -m pytest -q
+This module is the **primary hook** for future ML-, rule-, or graph-based plugins.
 
-Useful commands (git & release)
+---
 
-Tagging release:
+### 5. Per-Cell Engine (High-Fidelity Executor)
 
-git add .
-git commit -m "Phase1: freeze LabelCenter semantics, add plugin contracts"
-git tag -a v0.1.0-alpha -m "LabelCenter frozen; Phase1 complete"
-git push origin main --tags
+**Biological analogy**: individual immune cell dynamics
+**Role**: *How exactly is a decision executed?*
 
+Current status: **placeholder interface**
 
-Suggested release title: v0.1.0-alpha — LabelCenter frozen (Phase 1 complete)
+Design intent:
 
-Release description: use the “Phase 1 — Completed” plus “Roadmap” section above (shortened).
+* Spawned **only when needed**, under explicit budget control
+* Run detailed ODE / compartment / stochastic models
+* Write back **summarized effects** to the Label Center
 
-Contributing & code of conduct
+This allows precision where it matters, without sacrificing global scalability.
 
-Please open issues / PRs against main.
+---
 
-Tests must accompany any change that affects LabelCenter semantics.
+## Execution Model
 
-If you propose a refactor to LabelCenter internals, the external semantics must stay unchanged (tests should be updated/kept).
+* Simulation advances in discrete **ticks**
+* All state writes are **queued** and applied **transactionally** at tick end
+* Per-cell execution temporarily overrides bulk updates
+* Cooldown and hysteresis prevent oscillatory behavior
 
-Files to check first
+This mirrors immune stability under homeostasis versus emergency escalation.
 
-label_center/label_center_base.py — core semantics
+---
 
-label_center/label_center.py — orchestration / intent apply
+## Testing Philosophy
 
-test/ — tests that assert the guarantees
+Tests are organized around **architectural milestones**, not biological claims:
 
-License & attribution
+* `step7_x`: interface contracts, data flow correctness, replayability
+* later stages: integration, stress tests, behavior consistency
 
-We recommend MIT for research demo permissiveness — include LICENSE if you agree.
+Passing tests means that **layers agree on contracts** —
+not that immunity has been fully solved.
 
-Release notes (text for GitHub Release)
+---
 
-Title: v0.1.0-alpha — LabelCenter frozen (Phase 1 complete)
+## Future Plugin Directions
 
-Body:
-Phase 1 complete: LabelCenter semantics frozen. This release provides a transaction-consistent, ownership-aware Label Center for spatial immunological orchestration, along with Scan/Cell scaffolding and a comprehensive test suite (Steps 5.1–5.14). Phase 2 will introduce plugin contracts (InternalNet, PerCellEngine, VirusSkill, pMHC, AntibodyEffect, TherapeuticAgent, SIO/HIR) to allow pluggable decision & effect layers.
+Planned and anticipated extensions include:
 
-Short social / project blurb 
+* Learning-based InternalNet (RL / GNN / hybrid)
+* Alternative Scan Masters (virus-specific, tumor-specific)
+* Multi-organ or multi-tissue coordination
+* Antigen lifecycle and "skill" abstractions
+* Visualization, logging, and replay tools
 
-MacroImmunet_demo v0.1.0-alpha: Phase 1 complete — a transactionally consistent, ownership-aware Label Center for immune orchestration. We’ve frozen semantics (tick atomicity, ownership, hysteresis, deterministic arbitration) and prepared plugin contracts for Phase 2. Repo: <your-repo-url> — PRs and collaborators welcome!
+The system is designed to evolve **by replacement, not by rewrite**.
 
-Recommended additional docs to include in repo
+---
 
-freeze_readme.md (short legal-style semantics snapshot — you already have freeze_readme)
+## Who Is This For?
 
-docs/plugins.md — plugin spec (base classes + Null implementations)
+This demo is primarily aimed at:
 
-CONTRIBUTING.md & CODE_OF_CONDUCT.md
+* **Computational immunology and simulation researchers**
+* **Multi-agent and control-system modelers**
+* **Systems biologists who care about architecture first**
 
+Readers from immunology or biology backgrounds should be able to follow the concepts,
+even without deep infrastructure experience.
 
-small EXAMPLES.md showing simple run commands and demo flows
+If you believe that *immune systems are control systems*, you are in the right place.
+
+
 
 Note: Some inline comments are bilingual due to development environment constraints during early prototyping.
 Some refactoring and consistency checks were assisted by an AI-based coding assistant.
