@@ -40,28 +40,6 @@ Each layer has a **single responsibility** and trades biological detail for:
 
 ---
 
-## Repository Structure
-
-```
-MacroImmunet_demo/
-├── core/
-│   ├── label_center/      # Field + label (particle) state management
-│   ├── scan_master/       # Event detection & spatial attention
-│   ├── cell_master/       # Immune decision & intent generation
-│   ├── internal_net/      # Signaling / node-edge behavior network (stub)
-│   └── per_cell/          # High-fidelity single-cell executor (interface)
-│
-├── env/                   # Grid, fields, and simulation environment
-├── utils/                 # Shared helpers: scoring, sampling, logging
-│
-├── test/
-│   ├── step7_*/           # Incremental architecture & contract tests
-│   └── integration/       # End-to-end demo scenarios
-│
-├── demo/                  # Minimal runnable examples
-└── README.md
-```
-
 ---
 
 ## Core Modules Explained
