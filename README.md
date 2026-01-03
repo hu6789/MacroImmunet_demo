@@ -196,20 +196,5 @@ The system is designed to evolve **by replacement, not by rewrite**.
 
 ---
 
-## Who Is This For?
-
-This demo is primarily aimed at:
-
-* **Computational immunology and simulation researchers**
-* **Multi-agent and control-system modelers**
-* **Systems biologists who care about architecture first**
-
-Readers from immunology or biology backgrounds should be able to follow the concepts,
-even without deep infrastructure experience.
-
-If you believe that *immune systems are control systems*, you are in the right place.
-
-
-
 Note: Some inline comments are bilingual due to development environment constraints during early prototyping.
 Some refactoring and consistency checks were assisted by an AI-based coding assistant.
