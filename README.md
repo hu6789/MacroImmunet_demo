@@ -2,199 +2,199 @@
 
 ## A macro-scale immune system simulation framework
 
-**MacroImmunet** is a modular, event-driven *research demo* for simulating immune responses at the **tissue / organ scale**.
-Rather than reproducing full single-cell biophysics, it explores **how immune behavior emerges from structured coordination layers** acting over spatial fields.
+**MacroImmunet** is a research-oriented prototype exploring how a *transaction-consistent, ownership-aware Label Center* can serve as the single source of truth (SSOT) for spatial, agent-based immune simulations.
 
-At its core, MacroImmunet treats the immune system as a **control system**:
-fields are sensed, events are prioritized, decisions are coordinated, and actions are selectively executed.
+This demo focuses on *architecture clarity* rather than biological completeness, emphasizing **clear separation between sensing, decision, and world mutation**, and enabling higher-level immune logic to remain *pluggable, replaceable, and testable*.
 
-This demo is **not** a wet-lab–faithful simulator. Instead, it is designed to provide:
-
-* a **clear architectural separation** between sensing, decision, and execution;
-* a **scalable control abstraction** for heterogeneous immune populations;
-* a **plugin-ready sandbox** for future high-fidelity cell models, signaling networks, and learning modules.
-
-If you are interested in *how immune dynamics can be organized, not just simulated*, this repository is for you.
+> Status: architectural demo · not a validated biological model
 
 ---
 
-## Conceptual Overview
+## Core Design Ideas (TL;DR)
 
-MacroImmunet models immunity as a **multi-layer control pipeline** operating over a spatial grid:
+* **Three-stage pipeline**: Scan-time → Decision-time → Apply-time
+* **LabelCenter = SSOT**: all world state lives here, all writes are transactional
+* **Intent-only mutation**: no module mutates the world directly
+* **Ownership & anti-double-counting** baked into the state layer
+* **Decision engines are pluggable** (rule-based, network-based, ODE-based)
+
+---
+
+## Architecture 
 
 ```
-Field / Label Layer   (what exists)
-↓
-Scan Master           (what is happening?)
-↓
-Cell Master           (what should immune cells do?)
-↓
-Per-Cell Engine       (how exactly is it executed?)
+┌───────────────────────────────┐
+│        Apply-time             │
+│   LabelCenter.apply(Intent)   │
+│   - atomic commit per tick    │
+│   - ownership / hysteresis    │
+└───────────────▲───────────────┘
+                │
+        IntentBuilder
+        - expand allowed fates
+        - build atomic intents
+                ▲
+┌───────────────┴───────────────┐
+│        Decision-time           │
+│   CellMaster + Decision Core  │
+│   - context assembly          │
+│   - InternalNet / PerCell     │
+│   - HIR (feasibility gate)    │
+└───────────────▲───────────────┘
+                │
+┌───────────────┴───────────────┐
+│         Scan-time              │
+│        ScanMaster              │
+│   - read-only world summary    │
+│   - hotspot / contact detect  │
+└───────────────────────────────┘
 ```
-
-Each layer has a **single responsibility** and trades biological detail for:
-
-* computational tractability,
-* explicit decision boundaries,
-* and replaceability via plugins.
+This inverted view emphasizes that world mutation is always the final step,
+never mixed with sensing or decision logic.
 
 ---
 
----
+## Key Modules
+### 1. LabelCenter (State / Environment Layer)
 
-## Core Modules Explained
+Biological analogy: extracellular environment, antigen and cytokine distributions
 
-### 1. Label Center (State / Field Layer)
-
-**Biological analogy**: extracellular environment, antigen and cytokine distributions
-**Role**: *What exists right now?*
+Role: What exists right now?
 
 Responsibilities:
-
-* Maintain **continuous spatial fields**
-
+* Maintain continuous spatial fields:
   * antigen density
   * cytokine concentrations
   * danger / stress signals
-* Maintain **discrete labels / super-particles**
 
+* Maintain discrete labels / super-particles:
   * aggregated antigen sources
-  * events and hotspots
+  * active events and hotspots
 * Handle state mechanics:
-
   * particle ↔ field conversion
   * decay (half-life), diffusion
   * merge / split with hysteresis
   * ownership rules to prevent double counting
 
-This layer is intentionally **passive**:
-it never decides *what should happen*, only records *what exists*.
+This layer is intentionally passive: it never decides what should happen, only records what exists.
 
----
+### 2. ScanMaster (Event Detection Layer)
 
-### 2. Scan Master (Event Detection Layer)
+Biological analogy: innate immune sensing, tissue surveillance
 
-**Biological analogy**: innate immune sensing, tissue surveillance
-**Role**: *Where should attention be paid?*
+Role: Where should attention be paid?
 
 Responsibilities:
-
-* Periodically scan **grid summaries** from the Label Center
+* Periodically scan read-only summaries from LabelCenter
 * Detect salient events:
-
   * antigen hotspots
   * rapid antigen increases
-  * death or stress spikes
-* Rank regions using configurable **score functions**
-
+  * cell death or stress peaks
+* Rank regions using configurable scoring functions:
   * density
   * temporal delta
-  * recency / novelty
-* Emit **node inputs** for downstream decision layers
+  * novelty / recency
 
-Scan Master answers *"what is happening, and where"* —
-without prescribing actions.
+Emit structured NodeInput for downstream decision layers
 
----
+ScanMaster answers "what is happening, and where" — without prescribing actions.
 
-### 3. Cell Master (Cellular Decision Layer)
+### 3. CellMaster (Cellular Decision Orchestrator)
 
-**Biological analogy**: immune coordination, activation thresholds, clonal logic
-**Role**: *What should immune cells do?*
+Biological analogy: immune coordination, activation thresholds, clonal logic
+
+Role: What should immune cells consider doing?
 
 Responsibilities:
-
-* Receive node inputs from Scan Master
-* Batch-handle immune cells by:
-
+* Receive NodeInput from ScanMaster
+* Organize cells by:
   * cell type
   * spatial region
   * genotype / internal state strata
-* Apply decision logic:
 
-  * gene judges / gating rules
-  * InternalNet signaling evaluation
-* Convert activations into **structured intents**:
+Select and invoke an appropriate decision backend
 
-  * kill / migrate / proliferate
-  * cytokine secretion
-  * differentiation or memory flags
+Manage budgeting, batching, and throttling
 
-Cell Master **does not execute biology**.
-It produces *intent packages* that can later be executed at different fidelities.
+Forward decision results to the world-application layer (via IntentBuilder)
 
----
+CellMaster does not execute biology or mutate the world directly. It coordinates decision context.
 
-### 4. InternalNet (Immune Signaling Network)
+### 4. Decision Core (InternalNet / PerCell)
 
-**Biological analogy**: intracellular signaling pathways
-**Role**: *How does signal become behavior?*
+Biological analogy: intracellular signaling pathways
 
-Current status: **lightweight stub**
+Role: How do signals translate into cellular state changes?
+
+Current status: lightweight architectural stub
 
 Planned responsibilities:
+ * Node–edge signaling propagation
+ * Behavior activation with priorities
 
-* Node–edge signaling propagation
-* Behavior activation with priorities
-* Adaptive thresholds or learned policies
+Adaptive thresholds or learning-based policies
 
-This module is the **primary hook** for future ML-, rule-, or graph-based plugins.
+This layer is the primary hook for future rule-based or learning-based extensions.
+
+### 5. HIR — Homeostatic / Integrity Regulator
+
+Biological analogy: cellular checkpoints and stress regulation
+
+Role: Is a behavior physiologically feasible?
+
+Responsibilities:
+* Evaluate cell-level physiological summaries
+* Allow, suppress, or bias behaviors
+* Determine fate directions (e.g. divide, die, differentiate)
+
+HIR does not generate world mutations; it only constrains what is biologically admissible.
+
+### 6. IntentBuilder (World Realization Layer)
+
+Biological analogy: execution of division, death, and effector outcomes
+
+Role: How do allowed decisions concretely change the world?
+
+Responsibilities:
+* Translate allowed behaviors and fates into atomic Intents
+* Determine quantity expansion and instantiation details
+* Align all mutations with LabelCenter’s transactional semantics
+
+IntentBuilder does not introduce new biological judgments; it ensures consistent realization of allowed outcomes.
+---
+
+## Immunological Mapping (Conceptual)
+
+| Architecture Layer | Immunology Analogy                          |
+| ------------------ | ------------------------------------------- |
+| ScanMaster         | Antigen sensing / surveillance              |
+| Decision Core      | Intracellular signaling & stress regulation |
+| HIR                | Homeostasis & damage checkpoints            |
+| IntentBuilder      | Effector realization                        |
+| LabelCenter        | Tissue-scale physical reality               |
 
 ---
 
-### 5. Per-Cell Engine (High-Fidelity Executor)
 
-**Biological analogy**: individual immune cell dynamics
-**Role**: *How exactly is a decision executed?*
+## Scope & Non-Goals
 
-Current status: **placeholder interface**
+* ❌ Not a full immune system model
 
-Design intent:
+* ❌ Not parameter-validated biology
 
-* Spawned **only when needed**, under explicit budget control
-* Run detailed ODE / compartment / stochastic models
-* Write back **summarized effects** to the Label Center
+* ❌ Not optimized for performance
 
-This allows precision where it matters, without sacrificing global scalability.
+* ✅ Architecture exploration
 
----
+* ✅ Consistency and causality clarity
 
-## Execution Model
-
-* Simulation advances in discrete **ticks**
-* All state writes are **queued** and applied **transactionally** at tick end
-* Per-cell execution temporarily overrides bulk updates
-* Cooldown and hysteresis prevent oscillatory behavior
-
-This mirrors immune stability under homeostasis versus emergency escalation.
+* ✅ Long-term extensibility
 
 ---
 
-## Testing Philosophy
+## License & Usage
 
-Tests are organized around **architectural milestones**, not biological claims:
-
-* `step7_x`: interface contracts, data flow correctness, replayability
-* later stages: integration, stress tests, behavior consistency
-
-Passing tests means that **layers agree on contracts** —
-not that immunity has been fully solved.
-
----
-
-## Future Plugin Directions
-
-Planned and anticipated extensions include:
-
-* Learning-based InternalNet (RL / GNN / hybrid)
-* Alternative Scan Masters (virus-specific, tumor-specific)
-* Multi-organ or multi-tissue coordination
-* Antigen lifecycle and "skill" abstractions
-* Visualization, logging, and replay tools
-
-The system is designed to evolve **by replacement, not by rewrite**.
-
----
-
+This repository is intended for research, prototyping, and architectural discussion.
+Feel free to fork, experiment, or adapt the ideas with attribution.
 Note: Some inline comments are bilingual due to development environment constraints during early prototyping.
 Some refactoring and consistency checks were assisted by an AI-based coding assistant.
