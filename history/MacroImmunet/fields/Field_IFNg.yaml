@@ -1,0 +1,14 @@
+id: Field_IFNg
+display_name: "IFN-gamma field"
+substance_ref: "../substances/IFNg.yaml"
+type: cytokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.05
+decay_half_life_ticks: 180
+grid_scope: "local"
+optional: false
+notes:
+  - "Effector cytokine from Th1/CTL; induces CXCL10 and antiviral states."
+version: 1
+

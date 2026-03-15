@@ -1,0 +1,70 @@
+meta:
+  project: MacroImmunet_demo
+  version: 0.1
+  updated: 2025-11-04
+
+# Registry of available fields (each field can be loaded by EnvMaster)
+fields:
+  - id: Field_Antigen_Density
+    file: "../fields/Field_Antigen_Density.yaml"
+    required: true
+
+  - id: Field_IL12
+    file: "../fields/Field_IL12.yaml"
+    required: true
+
+  - id: Field_IL2
+    file: "../fields/Field_IL2.yaml"
+    required: true
+
+  - id: Field_IFNg
+    file: "../fields/Field_IFNg.yaml"
+    required: true
+
+  - id: Field_IL4
+    file: "../fields/Field_IL4.yaml"
+    required: false
+
+  - id: Field_TNF
+    file: "../fields/Field_TNF.yaml"
+    required: false
+
+  - id: Field_DAMP
+    file: "../fields/Field_DAMP.yaml"
+    required: true
+
+  - id: Field_CCL19
+    file: "../fields/Field_CCL19.yaml"
+    required: true
+
+  - id: Field_CCL21
+    file: "../fields/Field_CCL21.yaml"
+    required: false
+
+  - id: Field_CXCL10
+    file: "../fields/Field_CXCL10.yaml"
+    required: false
+
+  - id: Field_Perforin
+    file: "../fields/Field_Perforin.yaml"
+    required: false
+    optional: true
+
+  - id: Field_Granzyme
+    file: "../fields/Field_Granzyme.yaml"
+    required: false
+    optional: true
+
+  - id: Field_Cell_Debris
+    file: "../fields/Field_Cell_Debris.yaml"
+    required: false
+
+grid_defaults:
+  default_grid_resolution: 1.0     # abstract units per grid cell
+  default_size: [100, 100]         # default area if env doesn't override
+  boundary_conditions: "reflective" # or 'periodic' / 'open' as desired
+
+notes:
+  - "EnvMaster should create field buffers only for the 'fields_present' entries in each environment file (e.g., lung.yaml lists which of the above fields to instantiate)."
+  - "Optional fields (perforin/granzyme) are marked 'optional' and can be skipped to save compute."
+

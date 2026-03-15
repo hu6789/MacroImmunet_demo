@@ -1,0 +1,39 @@
+id: survival_signal_v1
+name: "Survival Signal Integration (v1)"
+type: behavior
+meta:
+  description: "Integrate pro-survival cytokines (IL-2/IL-15) and adjust internal survival score/apoptosis thresholds."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - fields: ["Field_IL2","Field_IL15"]
+  - internal: ["cell.survival_score","cell.base_apoptosis_threshold","cell.apoptosis_threshold","cell.coord"]
+
+params:
+  half_life_of_signal_effect_ticks: 240
+  boost_factor: 0.5
+  max_survival_score: 10.0         # safety cap
+  min_apoptosis_threshold: 0.01    # avoid zero threshold
+  log_level: "info"
+
+trigger:
+  type: "time"
+  condition: "ticks % 1 == 0"
+
+implementation:
+  module: "behaviors_impl.survival_signal"
+  function: "survival_signal_v1"
+  args:
+    params_ref: params
+    read_field_fn: "env.read_field"
+    emit_event_fn: "env.emit_event"
+    log_fn: "env.log_event"
+
+emits:
+  - event: "survival_boosted"
+    payload_fields: ["cell_id","survival_score","apoptosis_threshold","tick"]
+
+notes:
+  - "Implementation should compute exponential-decay integrator using decay = exp(-1/half_life), update survival_score with cap, recompute apoptosis_threshold = base_apoptosis_threshold * (1.0 - min(0.9, survival_score)) and clamp >= min_apoptosis_threshold, then emit structured event. Log decisions at debug/info per params.log_level."
+

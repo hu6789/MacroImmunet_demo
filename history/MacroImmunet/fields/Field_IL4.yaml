@@ -1,0 +1,14 @@
+id: Field_IL4
+display_name: "IL-4 field"
+substance_ref: "../substances/IL4.yaml"
+type: cytokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.05
+decay_half_life_ticks: 180
+grid_scope: "local"
+optional: true
+notes:
+  - "Th2-polarizing cytokine; optional for demo if Th2 branch used."
+version: 1
+

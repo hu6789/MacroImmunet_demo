@@ -1,0 +1,149 @@
+{
+  "nodes": [
+
+    {
+      "node_id": "TCR",
+      "node_type": "receptor",
+      "inputs": ["pMHC"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 2.0}
+    },
+
+    {
+      "node_id": "Lck",
+      "node_type": "kinase",
+      "inputs": ["TCR"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.5}
+    },
+
+    {
+      "node_id": "ZAP70",
+      "node_type": "kinase",
+      "inputs": ["Lck"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.5}
+    },
+
+    {
+      "node_id": "LAT",
+      "node_type": "scaffold",
+      "inputs": ["ZAP70"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.3}
+    },
+
+    {
+      "node_id": "PLCg",
+      "node_type": "enzyme",
+      "inputs": ["LAT"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.2}
+    },
+
+    {
+      "node_id": "Ca_signal",
+      "node_type": "signal",
+      "inputs": ["PLCg"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.2}
+    },
+
+    {
+      "node_id": "NFAT",
+      "node_type": "tf",
+      "inputs": ["Ca_signal"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.5}
+    },
+
+    {
+      "node_id": "RAS",
+      "node_type": "signal",
+      "inputs": ["LAT"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.2}
+    },
+
+    {
+      "node_id": "MAPK",
+      "node_type": "signal",
+      "inputs": ["RAS"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.3}
+    },
+
+    {
+      "node_id": "AP1",
+      "node_type": "tf",
+      "inputs": ["MAPK"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.4}
+    },
+
+    {
+      "node_id": "IL2",
+      "node_type": "cytokine",
+      "inputs": ["NFAT", "AP1"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 2.0}
+    },
+
+    {
+      "node_id": "Granzyme",
+      "node_type": "effector",
+      "inputs": ["NFAT"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.6}
+    },
+
+    {
+      "node_id": "Perforin",
+      "node_type": "effector",
+      "inputs": ["NFAT"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.6}
+    },
+
+    {
+      "node_id": "mTOR",
+      "node_type": "metabolic",
+      "inputs": ["NFAT"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.3}
+    },
+
+    {
+      "node_id": "EnergySensor",
+      "node_type": "metabolic",
+      "inputs": ["energy"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.0}
+    },
+
+    {
+      "node_id": "StressSignal",
+      "node_type": "stress",
+      "inputs": ["stress"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.0}
+    },
+
+    {
+      "node_id": "Caspase",
+      "node_type": "apoptosis",
+      "inputs": ["StressSignal"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.4}
+    },
+
+    {
+      "node_id": "Proliferation",
+      "node_type": "behavior",
+      "inputs": ["IL2", "mTOR"],
+      "update_rule": "weighted_sum_sigmoid",
+      "params": {"w0": 1.8}
+    }
+
+  ]
+}

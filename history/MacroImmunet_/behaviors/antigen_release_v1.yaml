@@ -1,0 +1,37 @@
+id: antigen_release_v1
+name: "Antigen Release on Cell Lysis (v1)"
+type: behavior
+meta:
+  description: "Release antigen upon host cell rupture (lysis). Demo-safe caps included."
+  version: "1.0"
+  created: 2025-11-04
+
+params:
+  release_probability: 0.6
+  release_burst_yield: 20
+  release_min_internal_load: 5.0
+  safety:
+    respect_global_spawn_cap: true
+    max_spawn_per_tick_global: 1000
+  # strategy when global cap exceeded: "proportional" | "first_come" | "truncate"
+  global_cap_strategy: "proportional"
+
+# Recommend delegating numeric logic to implementation module (safer than inline templates)
+implementation:
+  module: "behaviors_impl.antigen_release"
+  function: "handle_release_on_death"
+  args:
+    params_ref: params
+    spawn_fn: "env.spawn_antigen"   # engine function to call
+    field: "Field_Antigen_Density"  # default field target (engine/scenario may override)
+
+trigger:
+  type: "cell_death"
+  # If your engine supports boolean conditions, it can be provided; otherwise let implementation check.
+  condition: "cell.state == 'Infected' and coalesce(cell.viral_load, 0) >= params.release_min_internal_load"
+
+notes:
+  - "Implementation must compute release_yield = min(params.release_burst_yield, cell.viral_load * 0.8) in code, then apply safety caps."
+  - "When respect_global_spawn_cap is true and total planned spawn > max_spawn_per_tick_global, apply the configured global_cap_strategy."
+  - "Log each release event with: {'cell_id': cell.id, 'coord': cell.coord, 'yield': release_yield, 'seed_p': params.release_probability}."
+

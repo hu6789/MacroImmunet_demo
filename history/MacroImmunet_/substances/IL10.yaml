@@ -1,0 +1,16 @@
+id: IL10
+display_name: "Interleukin-10 (IL-10)"
+category: cytokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - "Regulatory_T_cells"
+  - "Macrophage_v1"
+typical_consumers:
+  - "Many immune cells"
+half_life_ticks: 240
+recommended_field: "Field_IL10"
+notes:
+  - "IL-10 is an immunoregulatory cytokine; typically suppresses inflammatory programs and co-stimulation."
+version: 1
+

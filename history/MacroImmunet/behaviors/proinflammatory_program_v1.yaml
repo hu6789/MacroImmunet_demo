@@ -1,0 +1,31 @@
+id: proinflammatory_program_v1
+type: behavior
+meta:
+  description: "Switch cell into a transient pro-inflammatory state (increase TNF/IL12 secretion, upregulate adhesion)."
+params:
+  increase_tnf_factor: 0.5
+  tnf_duration: 24
+  adhesion_fold: 1.2
+  adhesion_duration: 48
+
+actions:
+  - trigger:
+      type: "on_intent"
+      intent: "activate_proinflammatory_program"
+    outcome:
+      action: "compose"
+      payload:
+        - emit_intent: { type: "secrete", payload: { molecule: "TNF", rate_per_tick: "{{ params.increase_tnf_factor }}", duration_ticks: "{{ params.tnf_duration }}" } }
+        - emit_intent: { type: "regulate", payload: { target: "adhesion_molecules", fold_change: "{{ params.adhesion_fold }}", duration_ticks: "{{ params.adhesion_duration }}" } }
+
+notes:
+  - "Minimal composite: emits TNF secretion intent and a regulate intent that targets adhesion_molecules."
+  - "Engines should implement regulate by applying a fold change to the named internal and scheduling a revert."
+
+implementation:
+  module: "behaviors_impl.proinflammatory"
+  function: "proinflammatory_program_v1"
+
+implementation_hint:
+  recommended: "behaviors_impl.proinflammatory.proinflammatory_program_v1"
+

@@ -1,0 +1,47 @@
+id: Naive_CD4_v1
+name: Naive CD4 T cell (demo)
+version: 1
+description: |
+  Minimal Naive CD4 T cell used in demo/unit tests. Contains a small set of
+  receptors and behaviors sufficient to test activation, differentiation to Th1/Th2,
+  and basic migration to lymph node (CCR7-driven).
+type: cell
+default_state: Naive
+
+behaviors:
+  - TCR_scan_v1.yaml
+  - natural_apoptosis_v1.yaml
+  - move_toward_v1.yaml
+  - proliferate_v1.yaml
+  - differentiate_v1.yaml
+  - DC_process_and_load_MHC_v1.yaml
+
+receptors:
+  - TCR_v1.yaml
+  - CCR7_v1.yaml
+  - CD28_v1.yaml
+
+params:
+  basal_motility: 0.5
+  lymph_node_migration_threshold: 0.6
+  activation_co_stim_requirement: 0.3
+  default_proliferation_rate: 1.0
+  differentiation:
+    Th1:
+      trigger: "IFNg and IL12 signals + sufficient affinity"
+      prob: 0.9
+      behaviors:
+        - help_CD8_v1.yaml
+        - secrete_v1.yaml
+    Th2:
+      trigger: "IL4 + sufficient affinity"
+      prob: 0.9
+      behaviors:
+        - secrete_v1.yaml
+
+notes: |
+  - Tests should stub env.compute_affinity and env.collect_pMHC_near to simulate
+    TCR recognition events.
+  - The "differentiate_v1.yaml" behavior can read params.differentiation for rules.
+
+meta_defaults: {}

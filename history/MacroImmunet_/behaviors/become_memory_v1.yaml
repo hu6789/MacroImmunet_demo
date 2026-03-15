@@ -1,0 +1,42 @@
+id: become_memory_v1
+name: "Become Memory (v1)"
+type: behavior
+meta:
+  description: "Finalize memory transition: change state to memory type, adjust params and log lineage."
+  version: "1.0"
+  created: 2025-11-05
+
+params:
+  memory_type:
+    type: "string"
+    enum: ["early", "late"]
+    default: "early"
+  # optional overrides provided by payload
+  allow_payload_override: true
+
+# trigger: fires when an intent 'become_memory' is received for a cell
+trigger:
+  type: "on_intent"
+  intent: "become_memory"
+
+# delegate the mutation logic to an implementation function for safety and expressiveness
+implementation:
+  module: "behaviors_impl.become_memory"
+  function: "become_memory_v1"
+  args:
+    params_ref: params
+    log_fn: "env.log_lineage"   # engine callable to record lineage
+    event_emitter: "env.emit_event"  # engine's event emitter API
+
+# expected emitted event for downstream behaviors/systems
+emits:
+  - event: "became_memory"
+    payload:
+      fields: ["memory_type", "cell_id", "clone_id", "tick"]
+
+notes:
+  - "Implementation should: resolve memory_type = payload.memory_type if allowed and valid, or params.memory_type otherwise."
+  - "Set cell.state to a deterministic value (e.g. 'Memory_CD4_Early' or 'Memory_CD4_Late') by using the cell lineage/type context. Do not rely on inline templates in YAML."
+  - "Safely initialize and/or update numeric fields like survival_score and proliferation_potential (use safe-get and type-check)."
+  - "Emit event 'became_memory' with a well-formed JSON payload and call env.log_lineage(tick, cell.id, cell.clone_id, 'became_memory', payload) — log function should not raise on failure."
+

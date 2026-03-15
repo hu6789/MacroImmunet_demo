@@ -1,0 +1,59 @@
+id: Epithelial_Lung_Cell_v1
+type: cell
+display_name: "Lung Epithelial Cell (demo)"
+version: 1
+states:
+  - Healthy
+  - Infected
+  - Lytic
+  - Dead
+
+volume:
+  cell_volume_units: 1.0
+  radius_grid_units: 0.5
+
+receptors:
+  - ref: ACE2_v1
+    instance_params:
+      count: 600
+      k_on: 0.025
+      k_off: 0.008
+  - ref: IFNGR_v1
+    instance_params: { count: 40 }
+
+behaviors:
+  - id: antigen_invasion_v1
+  - id: antigen_replication_v1
+  - id: antigen_release_v1
+  - id: inflammatory_death_v1
+  - id: random_walk_v1
+  - id: natural_apoptosis_v1
+
+cell_cycle:
+  enabled: true
+  cycle_states: [G0, G1, S, G2, M]
+  default_cycle_time_ticks: 288
+  proliferation_rules:
+    allowed_states_for_division: [Healthy]
+    resource_requirement:
+      max_local_DAMP: 0.2
+      max_local_occupancy: 2
+    daughter_volume_split: true
+
+infection:
+  susceptible: true
+  tropism_tags: ["lung_epithelium"]
+  on_infect:
+    set_state: Infected
+    init_infection_timer: 0
+    viral_load: 1.0
+
+default_params:
+  base_random_speed: 0.2
+  replication_rate_fold_per_tick: 1.6
+  lysis_after_ticks: 12
+  burst_yield_units: 200
+
+diagnostics:
+  log_on_events: [infect, lysis, divide]
+

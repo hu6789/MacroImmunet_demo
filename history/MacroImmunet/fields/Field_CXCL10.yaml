@@ -1,0 +1,14 @@
+id: Field_CXCL10
+display_name: "CXCL10 field"
+substance_ref: "../substances/CXCL10.yaml"
+type: chemokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.08
+decay_half_life_ticks: 120
+grid_scope: "inflamed_tissue"
+optional: false
+notes:
+  - "Recruits CXCR3+ T cells; induced by IFN-γ."
+version: 1
+

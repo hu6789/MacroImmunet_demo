@@ -1,0 +1,178 @@
+# T_cell_lineage.yaml
+# Specification of T cell differentiation lineage used by the MacroImmunet demo.
+# This file describes canonical naive -> effector -> memory transitions,
+# the signals that drive them (cytokines, receptor engagement, TCR affinity),
+# default thresholds/probabilities and which behavior implementations to invoke.
+#
+# Conventions used here:
+# - "nodes" are named cell phenotypes (match cells/*.yaml names)
+# - "behaviors" references are to behaviors/*.yaml behavior IDs (not implementation modules)
+# - "receptors" lists receptors that must be present/expressed on the cell
+# - "transitions" define allowed directed transitions with triggers and params
+# - Tests and behavior implementations should read this spec to decide expected outcomes
+#
+name: T_cell_lineage
+version: 1
+description: |
+  T cell lineage rules for the demo. Defines how naive CD4/CD8 cells
+  differentiate into effectors (Th1/Th2/CTL), proliferate, and form memory.
+
+# Default parameter block that behaviors/tests can import or override per-experiment
+defaults:
+  # generic timing (ticks)
+  min_activation_ticks: 1          # minimal ticks of sustained activation before differentiation
+  differentiation_delay: 1         # additional delay in ticks before phenotype flips
+  proliferation_rounds_default: 2  # default number of cell divisions on activation
+  memory_conversion_prob: 0.2      # baseline prob an effector becomes memory per suitable signal
+
+nodes:
+  Naive_CD4:
+    description: "Naive CD4 T cell"
+    receptors:
+      - TCR_v1
+      - IL12R_v1
+      - IL4R_v1
+      - IL2R_v1
+    default_behaviors:
+      - differentiate_v1.yaml
+      - proliferate_v1.yaml
+    yaml_ref: cells/Naive_CD4_v1.yaml
+
+  Naive_CD8:
+    description: "Naive CD8 T cell (precursor to CTL)"
+    receptors:
+      - TCR_v1
+      - IL2R_v1
+    default_behaviors:
+      - differentiate_v1.yaml
+      - proliferate_v1.yaml
+    yaml_ref: cells/Naive_CD8_v1.yaml
+
+  Effector_Th1:
+    description: "CD4+ Th1 effector — IFNg producing, helps CD8"
+    markers: ["IFNg_high","Tbet"]
+    receptors:
+      - IL2R_v1
+      - IFNGR_v1
+    default_behaviors:
+      - secrete_v1.yaml  # IFNg etc
+      - help_CD8_v1.yaml
+    yaml_ref: cells/Effector_Th1_v1.yaml
+
+  Effector_Th2:
+    description: "CD4+ Th2 effector — IL4 producing"
+    markers: ["IL4_high","GATA3"]
+    receptors:
+      - IL2R_v1
+    default_behaviors:
+      - secrete_v1.yaml
+    yaml_ref: cells/Effector_Th2_v1.yaml
+
+  Effector_CTL:
+    description: "CD8+ Cytotoxic effector — perforin/granzyme mediated lysis"
+    markers: ["Perforin_high"]
+    receptors:
+      - IL2R_v1
+    default_behaviors:
+      - perforin_apoptosis_v1.yaml
+      - proliferate_v1.yaml
+    yaml_ref: cells/Effector_CTL_v1.yaml
+
+  Memory_CD4:
+    description: "Memory CD4 cell (long lived)"
+    markers: ["Memory_marker"]
+    yaml_ref: cells/Memory_CD4_v1.yaml
+
+  Memory_CD8:
+    description: "Memory CD8 cell"
+    markers: ["Memory_marker"]
+    yaml_ref: cells/Memory_CD8_v1.yaml
+
+transitions:
+  # CD4 branch: Naive -> Th1
+  - from: Naive_CD4
+    to: Effector_Th1
+    trigger:
+      type: cytokine_and_affinity
+      requirements:
+        - cytokine: IL12
+          min_concentration: 0.1
+          receptor: IL12R_v1
+        - tcr_affinity:
+            min: 0.3    # relative affinity (0..1)
+    params:
+      delay: 1
+      probability: 0.9
+      proliferation_rounds: 3
+      note: "IL-12 driven Th1 differentiation; boosted by strong TCR"
+    actions:
+      - call_behavior: differentiate_v1.yaml
+
+  # CD4 branch: Naive -> Th2
+  - from: Naive_CD4
+    to: Effector_Th2
+    trigger:
+      type: cytokine_and_affinity
+      requirements:
+        - cytokine: IL4
+          min_concentration: 0.1
+          receptor: IL4R_v1
+        - tcr_affinity:
+            min: 0.2
+    params:
+      delay: 1
+      probability: 0.9
+      proliferation_rounds: 2
+    actions:
+      - call_behavior: differentiate_v1.yaml
+
+  # CD8 branch: Naive -> Effector_CTL
+  - from: Naive_CD8
+    to: Effector_CTL
+    trigger:
+      type: affinity_and_help
+      requirements:
+        - tcr_affinity:
+            min: 0.4
+        - help_from_Th1: true
+    params:
+      delay: 0
+      probability: 0.8
+      proliferation_rounds: 4
+    actions:
+      - call_behavior: differentiate_v1.yaml
+
+  # Effector -> Memory (generic)
+  - from: Effector_Th1
+    to: Memory_CD4
+    trigger:
+      type: post_effector_conversion
+      requirements:
+        - survival_signals: true
+      params:
+        probability: ${defaults.memory_conversion_prob}
+        delay: 0
+    actions:
+      - call_behavior: become_memory_v1.yaml
+
+  - from: Effector_CTL
+    to: Memory_CD8
+    trigger:
+      type: post_effector_conversion
+      requirements:
+        - survival_signals: true
+      params:
+        probability: ${defaults.memory_conversion_prob}
+        delay: 0
+    actions:
+      - call_behavior: become_memory_v1.yaml
+
+notes: |
+  - Triggers are intentionally flexible: the implementation (behaviors_impl/*)
+    should interpret these triggers with the environment (fields, receptors,
+    TCR affinity helpers) to decide when to call differentiation behaviors.
+  - Tests will primarily exercise the transition "contract": given the
+    required cytokine concentrations and a stubbed affinity function, the
+    spec expects the target phenotype to be reached with probability indicated.
+  - Use the `defaults` block as the primary tuning place for tests.
+

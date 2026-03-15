@@ -1,0 +1,36 @@
+# path: receptors/AntigenPatternR_v1.yaml
+id: AntigenPatternR_v1
+type: receptor
+display_name: "Antigen Pattern Receptor (PAMP sensor)"
+ligand_field: "Field_Antigen_Density"
+description: "Pattern recognition receptor for particulate antigen / high local antigen density."
+
+default_params:
+  count: 50
+  k_on: 0.02
+  k_off: 0.05
+  mean_bound_time_ticks: 2
+  activation_threshold_nbound: 1
+  integration_window_ticks: 4
+  prefer_particles: false
+  refractory_ticks: 4
+
+downstream:
+  on_activation:
+    - behavior: "phagocytose_v1"
+      payload: {}
+    - behavior: "DC_process_and_load_MHC_v1"
+      payload: {}
+    - behavior: "secrete_v1"
+      payload:
+        molecule: "TNF"
+        rate_per_tick: 0.05
+        duration_ticks: 24
+
+notes:
+  - "Triggers on either field-concentration or explicit particle presence depending on antigen.default_mode."
+optional: false
+provenance:
+  created: 2025-11-05
+version: 1
+

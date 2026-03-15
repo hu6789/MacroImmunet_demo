@@ -1,0 +1,24 @@
+id: DC_upregulate_costim
+type: behavior
+meta:
+  description: "DC costimulation upregulation helper: increases cell.co_stim and optionally secretes IL-12."
+params:
+  costim_increase: 0.5
+  secrete_il12: true
+  il12_rate: 0.2
+  il12_duration: 24
+
+actions:
+  - trigger:
+      type: "on_intent"
+      intent: "upregulate_costim"
+    outcome:
+      action: "apply_changes"
+      payload:
+        - update_cell: "cell.co_stim = coalesce(cell.co_stim,0.0) + (payload.costim_increase or params.costim_increase)"
+        - if: "payload.secrete_il12 is true or params.secrete_il12 is true"
+          then:
+            - emit_intent: { type: "secrete", payload: { molecule: "IL12", rate_per_tick: params.il12_rate, duration_ticks: params.il12_duration } }
+implementation_hint:
+  recommended: "behaviors_impl.dc.DC_upregulate_costim"
+

@@ -1,0 +1,37 @@
+# Minimal Memory CD4 demo cell used in unit tests / demos
+id: Memory_CD4_v1
+display_name: "Memory CD4 (Memory4)"
+description: |
+  Minimal memory CD4 T cell for demo/tests.
+  - long-lived (survival signal)
+  - low-rate homeostatic proliferation on IL-7/IL-2-like signals
+  - retains TCR for antigen recognition (non-proliferative by default)
+meta_defaults:
+  lifespan: 1000000
+  state: "Resting"
+  # small homeostatic content
+  proliferation_capacity: 0.05
+receptors:
+  - TCR_v1
+  - CCR7_v1         # can migrate towards LN signals if needed
+  - CD28_v1         # co-stim capacity (kept for interactions)
+behaviors:
+  # survival: rely on survival_signal (exists in repo)
+  - behavior: survival_signal_v1.yaml
+    params:
+      base_survival_rate: 0.99
+  # occasional low-rate proliferation when signaled
+  - behavior: proliferate_v1.yaml
+    params:
+      proliferate_probability: 0.02
+      max_divisions: 1
+  # basic scanning to respond if antigen seen (uses TCR_scan behavior)
+  - behavior: TCR_scan_v1.yaml
+    params:
+      scan_radius: 1
+      detection_threshold: 0.5
+  # a small present/migrate action to allow re-activation workflows
+  - behavior: move_toward_v1.yaml
+    params:
+      step_size: 1
+

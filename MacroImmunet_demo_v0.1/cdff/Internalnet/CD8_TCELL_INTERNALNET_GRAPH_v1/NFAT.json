@@ -1,0 +1,7 @@
+{
+  "node_id": "NFAT",
+  "node_type": "tf",
+  "inputs": ["Ca_signal"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {"w0": 2.5}
+}

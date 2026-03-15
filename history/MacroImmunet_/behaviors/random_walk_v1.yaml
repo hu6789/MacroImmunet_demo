@@ -1,0 +1,44 @@
+id: random_walk_v1
+name: "Random Walk / Unbiased Move (v1)"
+type: behavior
+meta:
+  description: "Simple unbiased random movement intent; attempts a free neighbor."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - internal: ["cell.coord"]
+  - env_api: ["env.get_neighbor_coords", "env.coord_has_capacity"]
+
+params:
+  speed_units_per_tick: 0.5      # movement rate; if <1, interpreted as probability per tick of attempting a move
+  try_n_neighbors: 4
+  allow_diagonal: false
+  require_reservation: true
+  rng_inject: true
+
+trigger:
+  type: "time"
+  condition: "ticks % 1 == 0"
+
+implementation:
+  module: "behaviors_impl.random_walk"
+  function: "random_walk_v1"
+  args:
+    params_ref: params
+    get_neighbors_fn: "env.get_neighbor_coords"
+    coord_has_capacity_fn: "env.coord_has_capacity"
+    reserve_fn: "env.reserve_coord"      # optional
+    emit_intent_fn: "env.emit_intent"
+    rng_inject: true
+
+emits:
+  - intent: "move"
+    payload_fields: ["from","to","attempt_index","tick","reason"]
+
+notes:
+  - "Interpretation of speed_units_per_tick: if >=1, allow movement each tick with step size floor(speed); if <1, treat as per-tick probability to attempt a move (prob = speed_units_per_tick)."
+  - "Implementation should sample RNG to decide whether to attempt a move this tick when speed <1."
+  - "Candidate neighbor list should be shuffled with injected RNG for reproducibility and then limited to try_n_neighbors."
+  - "Before emitting move intent, optionally reserve target coord via reserve_fn to avoid collisions."
+

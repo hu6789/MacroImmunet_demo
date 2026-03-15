@@ -1,0 +1,32 @@
+id: IFNGR_v1
+type: receptor
+display_name: "IFN-γ Receptor (IFNGR)"
+ligand_field: Field_IFNg
+description: "Interferon-gamma receptor. Activation enhances antigen presentation and antiviral state."
+default_params:
+  count: 80
+  k_on: 0.007
+  k_off: 0.015
+  activation_threshold_nbound: 2
+  activation_threshold_integral: 8
+  integration_window_ticks: 36
+  refractory_ticks: 8
+downstream:
+  on_activation:
+    - behavior: up_down_regulate_v1
+      payload:
+        target: MHC_class_I
+        fold_change: 1.5
+        duration_ticks: 72
+    - behavior: secrete_v1
+      payload:
+        molecule: CXCL10
+        rate_per_tick: 0.02
+        duration_ticks: 48
+notes:
+  - "IFN-γ increases MHC I stability and induces CXCL10 production; effects are slower (integration-based)."
+optional: false
+provenance:
+  created: 2025-11-05
+version: 1
+

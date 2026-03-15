@@ -1,0 +1,21 @@
+id: CD28_v1
+type: receptor
+display_name: "CD28 (costimulatory receptor) - stub"
+ligand_field: ""   # no single field - interacts with cell ligand (B7) - keep empty for now
+description: "Costimulatory receptor stub; activation intended to increase proliferation/survival."
+default_params:
+  count: 150
+  k_on: 0.005
+  k_off: 0.01
+  activation_threshold_nbound: 1
+  integration_window_ticks: 24
+downstream:
+  on_activation:
+    - behavior: up_down_regulate_v1
+      payload:
+        target: "proliferation_potential"
+        fold_change: 1.2
+        duration_ticks: 48
+notes:
+  - "Stub: CD28 usually binds B7 on APCs; for unit tests this stub triggers proliferation support."
+version: 1

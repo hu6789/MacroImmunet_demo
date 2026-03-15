@@ -1,0 +1,6 @@
+{
+  "node_id": "ATP_level",
+  "node_type": "input",
+  "inputs": [],
+  "update_rule": "identity"
+}

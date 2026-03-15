@@ -1,0 +1,110 @@
+# specs/T_cell_lineage.yaml
+meta:
+  name: T_cell_lineage_v0.1
+  created: 2025-11-05
+  author: your_name
+
+CD4:
+  description: "CD4 differentiation rules (demo-level)"
+  default_params:
+    priming_activation_threshold: 0.20
+    co_stim_requirement: 0.20
+    memory_prob_per_division: 0.05
+    exhaustion_factor_baseline: 0.0
+
+  rules:
+    - id: priming_rule
+      priority: 100
+      trigger:
+        type: "tcr_and_costim"
+        condition: "affinity >= priming_activation_threshold and co_stim >= co_stim_requirement"
+        inputs: [affinity, co_stim]
+      outcome:
+        - action: "change_state"
+          new_state: "Primed"
+          probability: 1.0
+
+    - id: th1_differentiation
+      priority: 90
+      trigger:
+        type: "cytokine_modulated"
+        condition: "current_state == 'Primed' and affinity > 0.15"
+        inputs: [affinity, IL12, IFNg, IL4]
+      compute:
+        p_diff: "clip( affinity * (0.35 + 0.65 * clip((hill(IL12,0.4,2) * 1.0) + (hill(IFNg,0.5,1) * 0.5) - clip(IL4,0,1) * 1.0, -1.0, 1.0) ), 0.0, 1.0)"
+      outcome:
+        - action: "change_state"
+          new_state: "Effector_Th1"
+          probability_expr: "p_diff"
+
+    - id: th2_differentiation
+      priority: 85
+      trigger:
+        type: "cytokine_modulated"
+        condition: "current_state == 'Primed' and affinity > 0.10"
+        inputs: [affinity, IL4, IL12]
+      compute:
+        p_diff: "clip( affinity * (0.25 + 0.75 * hill(IL4,0.3,2)) * (1.0 - clip(IL12,0,1)), 0.0, 1.0)"
+      outcome:
+        - action: "change_state"
+          new_state: "Effector_Th2"
+          probability_expr: "p_diff"
+
+    - id: memory_selection
+      priority: 10
+      trigger:
+        type: "post_expansion"
+        condition: "division_count >= 1"
+        inputs: [division_count, exhaustion_factor]
+      compute:
+        exhaustion_factor: "coalesce(exhaustion_factor, exhaustion_factor_baseline)"
+        p_memory: "clip(memory_prob_per_division * (1.0 - exhaustion_factor), 0.0, 1.0)"
+      outcome:
+        - action: "change_state"
+          new_state: "Memory_CD4_Early"
+          probability_expr: "p_memory"
+
+CD8:
+  description: "CD8 differentiation rules (demo-level)"
+  default_params:
+    priming_activation_threshold: 0.25
+    memory_prob_per_division_cd8: 0.04
+
+  rules:
+    - id: priming_rule_cd8
+      priority: 100
+      trigger:
+        type: "tcr_and_help"
+        condition: "affinity >= priming_activation_threshold and (co_stim >= 0.20 or IL2 >= 0.10)"
+        inputs: [affinity, co_stim, IL2]
+      outcome:
+        - action: "change_state"
+          new_state: "Primed"
+          probability: 1.0
+
+    - id: ctl_differentiation
+      priority: 90
+      trigger:
+        type: "cytokine_helped"
+        condition: "current_state == 'Primed'"
+        inputs: [affinity, IL2, IFNg]
+      compute:
+        p_diff: "clip( 0.5 * affinity + 0.5 * hill(IL2,0.3,2), 0.0, 1.0)"
+      outcome:
+        - action: "change_state"
+          new_state: "Effector_CTL"
+          probability_expr: "p_diff"
+
+    - id: memory_cd8_selection
+      priority: 10
+      trigger:
+        type: "post_expansion"
+        condition: "division_count >= 1"
+        inputs: [division_count]
+      compute:
+        p_memory: "coalesce(memory_prob_per_division_cd8, 0.04)"
+      outcome:
+        - action: "change_state"
+          new_state: "Memory_CD8"
+          probability_expr: "p_memory"
+

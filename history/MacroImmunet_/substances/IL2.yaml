@@ -1,0 +1,23 @@
+id: IL2
+display_name: "Interleukin-2 (IL-2)"
+category: cytokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - "Effector_Th1_v1"
+  - "Effector_Th2_v1"
+  - "Activated_T_cells"
+typical_consumers:
+  - "Naive_CD4_v1"
+  - "Naive_CD8_v1"
+  - "Memory_CD4_Early_v1"
+half_life_ticks: 120
+recommended_field: "Field_IL2"
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Local paracrine driver of T cell proliferation/survival; used by IL2_proliferation and survival behaviors."
+version: 1
+

@@ -1,0 +1,9 @@
+{
+  "id": "ZAP70",
+  "type": "signal",
+  "inputs": ["Lck"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {
+    "w0": 1.6
+  }
+}

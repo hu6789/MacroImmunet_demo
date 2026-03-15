@@ -1,0 +1,7 @@
+{
+  "node_id": "AP1",
+  "node_type": "tf",
+  "inputs": ["MAPK"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {"w0": 1.4}
+}

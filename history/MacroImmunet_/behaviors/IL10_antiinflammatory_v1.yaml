@@ -1,0 +1,51 @@
+id: IL10_antiinflammatory_v1
+name: "IL-10 Anti-inflammatory Modulation (v1)"
+type: behavior
+meta:
+  description: "Sense local IL-10 and apply anti-inflammatory effects: reduce local inflammatory scores, suppress pro-inflammatory cytokine production, lower antigen presentation efficacy, and raise apoptosis thresholds."
+  version: "1.0"
+  created: 2025-11-10
+
+inputs:
+  - fields: ["Field_IL10", "Field_TNF", "Field_DAMP", "Field_IL12", "Field_IFNg"]
+  - internal: ["cell.type", "cell.state", "cell.co_stim", "cell.processing_efficiency"]
+
+params:
+  il10_threshold: 0.1                   # field concentration above which IL-10 has effect
+  integration_half_life_ticks: 120      # integrate IL-10 over this timescale
+  suppression_strength: 0.5             # 0..1, fraction reduction applied to pro-inflammatory outputs
+  presentation_reduction: 0.4           # fraction reduce processing/presentation efficiency
+  apoptosis_threshold_boost: 0.2        # add to survival_score or scale threshold
+  max_local_suppression_radius: 1       # radius to optionally reduce neighbor inflammatory scores
+  emit_event_on_change: true
+
+trigger:
+  type: "time"
+  condition: "ticks % 1 == 0"
+
+implementation:
+  module: "behaviors_impl.il10"
+  function: "IL10_antiinflammatory_v1"
+  args:
+    params_ref: params
+    read_field_fn: "env.read_field"
+    write_field_fn: "env.add_to_field"         # used if applying local suppression as field deltas
+    apply_cell_update_fn: "cell_api.update_cell" # atomic cell update helper
+    emit_event_fn: "env.emit_event"
+    log_fn: "env.log_event"
+    rng_inject: false
+
+emits:
+  - event: "il10_modulated"
+    payload_fields: ["cell_id","il10_level","suppression_strength_applied","tick"]
+
+notes:
+  - "Implementation responsibilities:"
+  - "  * Integrate IL-10 at cell.coord with exponential decay: decay = exp(-1/integration_half_life_ticks)."
+  - "  * If integrated IL-10 >= params.il10_threshold then apply anti-inflammatory effects atomically to cell:"
+  - "      - reduce cell.processing_efficiency *= (1 - presentation_reduction)"
+  - "      - reduce production/emit intents for Field_TNF/Field_IL12/Field_IFNg by factor (1 - suppression_strength) for this tick"
+  - "      - increase cell.survival_score by apoptosis_threshold_boost (or adjust apoptosis_threshold accordingly)"
+  - "  * Optionally propagate a small suppressive field delta to nearby grid cells up to max_local_suppression_radius using write_field_fn (use sparingly to avoid mass writes)"
+  - "  * Emit il10_modulated event with applied parameters for observability."
+

@@ -1,0 +1,29 @@
+cat > behaviors/help_CD8_v1.yaml <<'YAML'
+id: help_CD8_v1
+type: behavior
+meta:
+  description: "Help CD8 helper behavior - emits IL2 help signal or 'help' intent for nearby CD8s when Th1 activated."
+  version: "0.1"
+  created: 2025-11-13
+
+params:
+  il2_help_rate_per_tick: 0.1
+  help_duration_ticks: 12
+  affinity_min: 0.1
+
+actions:
+  - trigger:
+      type: "on_event"
+      event: "tcr_scan_result"
+      condition: "coalesce(cell.state,'') in ['Effector_Th1','Primed'] and coalesce(cell.last_tcr_affinity,0.0) >= params.affinity_min"
+    outcome:
+      action: "emit_intent"
+      intent: "secrete"
+      payload:
+        molecule: IL2
+        rate_per_tick: "{{ params.il2_help_rate_per_tick }}"
+        duration_ticks: "{{ params.help_duration_ticks }}"
+notes:
+  - "Minimal helper behavior: when Th1-like cells see affinity, they emit an IL-2 seeding intent to help CD8 priming/proliferation."
+YAML
+

@@ -1,0 +1,43 @@
+id: phagocytose_v1
+name: "Phagocytose Antigen (v1)"
+type: behavior
+meta:
+  description: "Phagocytose antigen units from local antigen field or particles and load into cell.antigen_load. Demo-safe caps included."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - field: "Field_Antigen_Density"
+  - internal: ["cell.antigen_load", "cell.coord"]
+
+params:
+  max_capacity: 5
+  uptake_per_tick: 2
+  prefer_particles: true
+  respect_global_spawn_cap: true    # optional global safety hook
+  max_spawn_per_tick_global: 1000
+
+trigger:
+  type: "time"
+  condition: "ticks % 1 == 0"   # evaluate per tick; engine may optimize
+
+implementation:
+  module: "behaviors_impl.phagocytose"
+  function: "phagocytose_v1"
+  args:
+    params_ref: params
+    read_field_fn: "env.read_field"          # (field_name, coord) -> float
+    consume_field_fn: "env.consume_local_antigen"  # (coord, amount) -> success(bool)
+    emit_event_fn: "env.emit_event"
+    get_particles_fn: "env.sample_particles_at"    # optional
+    rng_inject: true
+
+emits:
+  - event: "phagocytosed"
+    payload_fields: ["cell_id","amount","tick","source"]
+
+notes:
+  - "Implementation should compute consumed_amount = min(uptake_per_tick, max_capacity - current_load, field_value, available_particles_if_prefer) and then atomically reduce the field mass (consume_field_fn) before updating cell.antigen_load to avoid double-counting."
+  - "If consume_field_fn fails, implementation should log and not update cell.antigen_load."
+  - "Prefer particle uptake if prefer_particles true and particles exist; otherwise consume from field density."
+

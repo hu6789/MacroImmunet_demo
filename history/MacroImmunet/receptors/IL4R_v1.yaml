@@ -1,0 +1,23 @@
+id: IL4R_v1
+type: receptor
+display_name: "IL-4 Receptor (tuned)"
+ligand_field: "Field_IL4"
+description: "Tuned IL-4 receptor (conservative defaults). Units: k_on [1/(au·tick)], k_off [1/tick]."
+
+default_params:
+  count: 20
+  k_on: 0.002
+  k_off: 0.02
+  activation_threshold_nbound: 2
+  activation_threshold_integral: 50
+  integration_window_ticks: 24
+  refractory_ticks: 6
+downstream:
+  on_activation:
+    - behavior: "IL4_drive_v1"
+      payload:
+        cause: "IL4_signal"
+notes:
+  - "Tuned conservative defaults to avoid over-triggering on short pulses."
+version: 1
+

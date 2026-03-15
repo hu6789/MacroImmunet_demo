@@ -1,0 +1,21 @@
+id: IL6
+display_name: "Interleukin-6 (IL-6)"
+category: cytokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - "Macrophage_v1"
+  - "DendriticCell_v1"
+  - "Inflamed_Tissue_Cells"
+typical_consumers:
+  - "Various_immune_cells"
+half_life_ticks: 180
+recommended_field: "Field_IL6"
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-11
+notes:
+  - "Pro-inflammatory cytokine involved in acute-phase response and inflammation. Often used with TNF/DAMP to assess inflammatory state."
+version: 1
+

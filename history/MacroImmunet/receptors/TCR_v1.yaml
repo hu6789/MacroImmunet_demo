@@ -1,0 +1,38 @@
+id: TCR_v1
+type: receptor
+display_name: "T Cell Receptor (TCR) v1"
+description: >
+  TCR abstraction. Per-cell clonotype repertoire supported. Provides helper
+  compute_affinity(cell, pmhc_entry) that maps pMHC -> affinity [0..1].
+instance_params:
+  tcr_density: 1000
+  repertoire_size: 20
+  default_affinity_base: 0.5
+  match_mode: "epitope_first"
+  kmer_k: 9
+  cdr3_length: 12
+repertoire_generation:
+  mode: random_kmer_based
+  random_seed: 2025
+  diversity_noise: 0.2
+affinity_mapping:
+  epitope_hit_boost: 1.0
+  kmer_identity_weight: 0.8
+  similarity_to_affinity:
+    type: logistic
+    k: 10
+    x0: 0.5
+helpers:
+  - name: compute_affinity
+    description: "Expected to be called by TCR_scan_v1; returns affinity 0..1."
+    notes:
+      - "If pmhc_entry.peptide_id in clonotype.specificity => high affinity path."
+      - "Else fallback to kmer overlap-based similarity scoring transformed by logistic."
+notes:
+  - "TCR_scan_v1 should be the only behavior calling compute_affinity for now."
+  - "Loader should initialize per-cell tcr_repertoire according to repertoire_generation."
+optional: false
+provenance:
+  created: 2025-11-05
+version: 1
+

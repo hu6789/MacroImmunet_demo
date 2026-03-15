@@ -1,0 +1,14 @@
+id: Field_DAMP
+display_name: "DAMP field"
+substance_ref: "../substances/DAMP.yaml"
+type: danger_signal
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.03
+decay_half_life_ticks: 60
+grid_scope: "local"
+optional: false
+notes:
+  - "Damage-associated molecular patterns attracting phagocytes and activating APCs."
+version: 1
+

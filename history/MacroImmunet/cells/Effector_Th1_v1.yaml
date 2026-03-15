@@ -1,0 +1,40 @@
+--- 
+name: Th1_v1
+display_name: "Helper CD4 (Th1) - v1"
+category: cell
+version: 1
+description: |
+  Minimal Th1 effector used in demos/tests. Activates on TCR signal and IL12,
+  secretes IFNg, increases co-stim (CD40L-like effect) and can migrate to lymph node.
+
+receptors:
+  - file: TCR_v1.yaml
+  - file: IL12R_v1.yaml
+  - file: IL2R_v1.yaml
+  - file: CCR7_v1.yaml
+
+behaviors:
+  - file: TCR_scan_v1.yaml
+    params:
+      sensitivity: 0.8
+  - file: differentiate_v1.yaml
+    params:
+      fate: Th1
+      require_co_stim: true
+  - file: secrete_v1.yaml
+    params:
+      substance: IFNg
+      rate: 1.0
+  - file: move_toward_v1.yaml
+    params:
+      chemokine_field: Field_CCL19
+      speed: 1.0
+  - file: proliferate_v1.yaml
+    params:
+      base_rate: 0.1
+  - file: survival_signal_v1.yaml
+    params: {}
+
+meta_defaults:
+  activation_state: Naive
+  cytokine_profile: {}

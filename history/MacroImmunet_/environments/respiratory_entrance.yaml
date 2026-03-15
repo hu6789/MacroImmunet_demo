@@ -1,0 +1,33 @@
+# environment/respiratory_entrance.yaml
+id: Respiratory_Entrance
+type: interface
+name: "Respiratory Entrance (Aerosol Interface)"
+description: "Interface for seeding aerosol / bolus antigen events. Maps to Lung_Tissue border."
+
+grid:
+  width: 6
+  height: 2
+  resolution: 1.0
+
+placement_rules:
+  - rule: seed_aerosol
+    distribution: gaussian
+    center_offset: [3,1]
+    spread: 2
+    # loader-friendly hint: if loader supports agent seeding through env file, use this
+    agent_to_seed:
+      id: "Antigen_SARS_like_001"
+      count: 0         # keep 0 here for explicit scenario-driven spawn; scenario will place agents
+      per_event: true
+    mapping:
+      to_space: Lung_Tissue_2D
+      map_mode: border_top
+      probability_per_event: 1.0
+      transfer_delay_ticks: 0
+
+boundary: absorbing
+
+notes:
+  - "This interface maps aerosol seeding events into Lung_Tissue_2D via layout links."
+  - "Prefer scenario-driven spawning (scenarios/respiratory_seed.yaml) for reproducibility in demos."
+

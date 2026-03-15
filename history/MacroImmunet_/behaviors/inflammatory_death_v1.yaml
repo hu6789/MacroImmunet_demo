@@ -1,0 +1,63 @@
+id: inflammatory_death_v1
+name: "Inflammatory Death (v1)"
+type: behavior
+meta:
+  description: "Detect high local inflammatory signals (DAMP/TNF/IL6) and trigger lysis or apoptosis."
+  version: "1.1"
+  created: 2025-11-11
+
+inputs:
+  - fields: ["Field_DAMP", "Field_TNF", "Field_IL6"]
+  - internal: ["cell.stress_integral"]
+
+params:
+  # per-field thresholds (if set, used to compute effective_threshold)
+  thresholds:
+    Field_DAMP: 1.0
+    Field_TNF: 1.0
+    Field_IL6: 1.0
+  # per-field relative weights in aggregator (default 1.0)
+  weights:
+    Field_DAMP: 0.8
+    Field_TNF: 1.0
+    Field_IL6: 0.9
+  # global behavior controls
+  death_prob_at_threshold: 0.7
+  integrate_window_ticks: 6
+  # strategy for choosing between lysis and apoptosis: "random", "weighted", "apoptosis_preferred", etc.
+  death_mode_strategy: "random"
+  death_mode_weights:
+    lysis: 0.5
+    apoptosis: 0.5
+  # clamp max probability
+  max_death_prob: 0.95
+
+trigger:
+  type: "time"
+  condition: "ticks % 1 == 0"
+
+implementation:
+  module: "behaviors_impl.inflammatory_death"
+  function: "inflammatory_death_v1"
+  args:
+    params_ref: params
+    read_fields_fn: "env.read_field"
+    emit_intent_fn: "env.emit_intent"
+    log_fn: "env.log_event"
+    rng_inject: true
+
+emits:
+  - intent: "lysis"
+    payload_fields: ["cell_id","p","stress_integral","tick","cause"]
+  - intent: "apoptosis"
+    payload_fields: ["cell_id","p","stress_integral","tick","cause"]
+
+notes:
+  - "Implementation should compute stress_integral as an exponential decay integrator:"
+  - "  decay = exp(-1 / integrate_window_ticks); cell.stress_integral = cell.stress_integral * decay + aggregated_signal"
+  - "Aggregated_signal = sum_over_fields( weight[field] * field_value )"
+  - "Effective_threshold = weighted_mean(thresholds, weights) OR user-specified single threshold; use whichever is configured."
+  - "Compute probability p = min(max_death_prob, death_prob_at_threshold * (stress_integral / (effective_threshold * 2.0)))."
+  - "If rng.random() < p then choose death mode according to death_mode_strategy and emit the corresponding intent with a structured payload."
+  - "Log values (per-field values, weights, stress_integral, p, draw) for debuggability."
+

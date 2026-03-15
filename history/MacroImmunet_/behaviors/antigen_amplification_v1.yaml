@@ -1,0 +1,49 @@
+id: antigen_amplification_v1
+name: "Antigen Amplification (v1)"
+type: behavior
+meta:
+  description: "Simulate antigen amplification (abstract). Use with caution: intended for field-mode or specialized particle-mode."
+  version: "1.0"
+  created: 2025-11-04
+
+#明确目标 field（必填）: 推荐在使用前由场景/细胞指定或行为参数覆盖
+target_field: "Field_Antigen_Density"   # NOTE: 指定默认目标 field 名称，按需替换
+
+params:
+  mode: "field"                         # allowed: "field" | "cell"
+  replication_rate_fold_per_tick: 1.15  # conservative demo default, must be >= 1.0 for amplification
+  burst_yield_units: 50
+  max_replication_ticks: 12
+  host_required: false                  # if true, only replicate inside infected cells (engine must enforce)
+  max_replication_per_cell_per_tick: 20 # safety cap when host_required is true
+  saturation_K: 500.0                   # logistic cap for field-mode
+  safety_limits:
+    max_spawn_per_tick_global: 1000
+
+# Optional validation schema for engine or sanity-checker
+validate:
+  required_params: ["replication_rate_fold_per_tick", "burst_yield_units", "safety_limits"]
+  types:
+    replication_rate_fold_per_tick: "float"
+    burst_yield_units: "int"
+    saturation_K: "float"
+    mode: "string"
+
+actions:
+  - trigger:
+      type: "time"
+      # NOTE: avoid engine-specific functions like coalesce in triggers if uncertain.
+      # Use a simple numeric threshold or let engine treat missing ticks as 0.
+      condition: "ticks_since_last_replication >= 1"
+    outcome:
+      action: "replicate"
+      effect: "amplify_antigen"
+      target_field: "{{ target_field }}"             # resolved at runtime
+      replication_factor: "{{ params.replication_rate_fold_per_tick }}"
+      burst_yield: "{{ params.burst_yield_units }}"
+      max_ticks: "{{ params.max_replication_ticks }}"
+
+notes:
+  - "If you use this behavior in field-mode, ensure the engine applies saturation_K to avoid runaway growth."
+  - "Prefer per-cell intracellular replication using antigen_replication_v1 for biologically plausible dynamics."
+

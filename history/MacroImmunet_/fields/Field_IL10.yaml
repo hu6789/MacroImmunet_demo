@@ -1,0 +1,12 @@
+id: Field_IL10
+display_name: "IL-10 field"
+substance_ref: "../substances/IL10.yaml"
+type: cytokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.04
+decay_half_life_ticks: 240
+grid_scope: "local"
+notes: "IL-10 suppresses inflammation and co-stimulation; used by IL10R_v1 to downregulate inflammatory programs."
+version: 1
+

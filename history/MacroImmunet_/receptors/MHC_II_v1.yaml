@@ -1,0 +1,22 @@
+id: MHC_II_v1
+type: presentation_molecule
+display_name: "MHC Class II (abstract)"
+description: "MHC II used to present longer peptides (13-17 aa) to CD4."
+properties:
+  mhc_class: II
+  preferred_lengths: [13,14,15]
+  default_stability_half_life_ticks: 240
+  max_peptide_slots: 8
+  cross_presentation: false
+  presentation_mode: "exogenous"
+binding_hints:
+  anchor_positions_by_length:
+    15: [1,4,6,9,12]
+  default_affinity_model: "from_epitope_preference_or_sequence"
+notes:
+  - "present_v1 should create pMHC entries with mhc_type: MHC_II for CD4 priming."
+optional: false
+provenance:
+  created: 2025-11-05
+version: 1
+

@@ -1,0 +1,20 @@
+刷新 import 缓存（你已熟练）：
+
+python3 - <<'PY'
+import importlib
+importlib.invalidate_caches()
+print("caches invalidated")
+PY
+
+#tests
+PYTHONPATH=. python3 -m pytest -q tests/unit
+#runner_ein
+PYTHONPATH=. python3 runner_ein/orchestrator_demo.py
+
+
+
+PYTHONPATH=. python3 runner_ein/run_scenario.py runner_ein/scenarios/healthy.yaml 8
+PYTHONPATH=. python3 runner_ein/run_scenario.py runner_ein/scenarios/low_dose.yaml 12
+PYTHONPATH=. python3 runner_ein/run_scenario.py runner_ein/scenarios/high_dose.yaml 20
+
+

@@ -1,0 +1,42 @@
+id: DC_process_and_load_MHC_v1
+name: "DC Process and Load MHC (v1)"
+type: behavior
+meta:
+  description: "Composite for dendritic cell: phagocytose -> process -> present -> upregulate co-stim -> migrate_to_LN (if threshold)."
+  version: "1.0"
+  created: 2025-11-05
+
+params:
+  migrate_threshold: 0.4
+  costim_increase: 0.5
+  # whether to call sub-behaviors or inline implementations
+  use_subbehaviors: true
+
+trigger:
+  type: "on_intent"          # or 'time'/'on_event' depending on engine (e.g., when antigen_load increases)
+  intent: "process_antigen"  # example intent to start DC processing
+
+implementation:
+  module: "behaviors_impl.dc_process"
+  function: "DC_process_and_load_MHC_v1"
+  args:
+    params_ref: params
+    phagocytose_behavior: "behaviors.phagocytose_v1"  # implementation may call this or inline logic
+    present_behavior: "behaviors.present_v1"
+    log_fn: "env.log_event"
+
+# events emitted by this composite for downstream consumers
+emits:
+  - event: "pMHC_presented"
+    payload_fields: ["presenter", "pMHC_list", "tick"]
+  - event: "migrate_to_LN"
+    payload_fields: ["cell_id", "co_stim", "tick"]
+
+notes:
+  - "Implementation responsibilities:"
+  - "  1) Attempt phagocytosis (call phagocytose_v1 or inline). Collect captured_antigens in cell context."
+  - "  2) Process captured antigens (call present_v1) -> produce pMHC items or counts for logging and event emission."
+  - "  3) If cell.maturation_state != 'Mature', set it and increase co_stim by params.costim_increase (use safe-get)."
+  - "  4) If new co_stim >= params.migrate_threshold then emit migrate_to_LN and pMHC_presented events (use engine emit API)."
+  - "  5) Ensure atomic updates to cell (maturation_state, co_stim) and that sub-behavior calls are exception-handled and logged."
+

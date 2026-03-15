@@ -1,0 +1,20 @@
+id: CCR5_v1
+type: receptor
+display_name: "CCR5"
+ligand_field: Field_CXCL10   # placeholder
+description: "Placeholder CCR5 receptor (stub)."
+default_params:
+  count: 30
+  k_on: 0.02
+  k_off: 0.04
+  activation_threshold_nbound: 1
+  integration_window_ticks: 8
+downstream:
+  on_activation:
+    - behavior: move_toward_v1
+      payload:
+        mode: chemotaxis
+        chemokine: Field_CXCL10
+notes:
+  - "Stub implementation; change ligand_field if needed."
+version: 1

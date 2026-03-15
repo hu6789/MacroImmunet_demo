@@ -1,0 +1,10 @@
+{
+  "node_id": "TCR",
+  "node_type": "receptor",
+  "inputs": ["pMHC"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {
+    "w0": 6.0,
+    "bias": -3.0
+  }
+}

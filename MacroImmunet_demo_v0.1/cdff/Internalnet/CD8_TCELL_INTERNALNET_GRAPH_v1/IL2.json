@@ -1,0 +1,9 @@
+{
+  "id": "IL2",
+  "type": "cytokine",
+  "inputs": ["NFAT", "AP1"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {
+    "w0": 2.8
+  }
+}

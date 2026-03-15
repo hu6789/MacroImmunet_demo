@@ -1,0 +1,49 @@
+id: IL2_proliferation_v1
+name: "IL-2 Driven Proliferation (v1)"
+type: behavior
+meta:
+  description: "Respond to local IL-2 by triggering proliferate intent (used by CD4/CD8 and memory cells)."
+  version: "1.0"
+  created: 2025-11-05
+
+# Inputs hint (for doc and cross-ref tools)
+inputs:
+  - fields: ["Field_IL2"]
+  - receptor: "IL2R_v1"
+  - internal: ["cell.state", "cell.last_proliferation_tick"]
+
+params:
+  il2_activation_threshold: 0.1
+  proliferation_divisions_on_signal: 1
+  survival_boost_on_signal: 0.2
+  # safety / anti-runaway
+  max_divisions_per_tick_per_cell: 2
+  per_cell_cooldown_ticks: 3
+  respect_global_proliferation_cap: true
+  max_global_divisions_per_tick: 500
+
+trigger:
+  type: "time"
+  condition: "ticks % 1 == 0"   # run every tick (engine may override)
+
+implementation:
+  module: "behaviors_impl.il2_proliferation"
+  function: "IL2_proliferation_v1"
+  args:
+    params_ref: params
+    field_name: "Field_IL2"
+    receptor_id: "IL2R_v1"
+    emit_event_fn: "env.emit_event"
+    emit_intent_fn: "env.emit_intent"
+    read_field_fn: "env.read_field"
+
+emits:
+  - event: "survival_boost"
+    payload_fields: ["cell_id","amount","tick","source"]
+  - intent: "proliferate"
+    payload_fields: ["cell_id","divisions","cause","tick"]
+
+notes:
+  - "Implementation should: sample IL2 at cell.coord via provided read_field_fn, verify receptor activation (IL2R_v1) if applicable, compare to threshold, check per-cell cooldown and per-tick caps, then emit a 'survival_boost' event and a 'proliferate' intent with structured payload."
+  - "Respect per-cell and global caps to avoid runaway proliferation in dense IL-2 fields."
+

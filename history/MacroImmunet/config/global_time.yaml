@@ -1,0 +1,10 @@
+# File: config/global_time.yaml
+# Defines mapping between simulation tick and wall-clock biological time.
+# Recommendation for demo: 1 tick = 1 minute (adjust if you want coarser/finer resolution).
+tick_time_seconds: 60
+tick_time_minutes: 1
+# convenience: helper description for implementers
+notes:
+  - "Use tick mapping when interpreting decay_half_life_ticks, lysis_after_ticks, lifespan_ticks, etc."
+  - "Example: decay_half_life_ticks: 240 -> 240 minutes (4 hours) when tick_time_minutes = 1."
+

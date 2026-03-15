@@ -1,0 +1,40 @@
+---
+name: Effector_CTL_v1
+display_name: "Effector CD8 T cell (CTL) - v1"
+category: cell
+version: 1
+description: |
+  Minimal CTL used in demos/tests. Scans pMHC (TCR_scan_v1), when target found it
+  can execute perforin_apoptosis behavior (intent), secretes IFNg and migrates toward
+  infected tissue fields.
+
+receptors:
+  - file: TCR_v1.yaml
+  - file: IL2R_v1.yaml
+  - file: CCR7_v1.yaml
+
+behaviors:
+  - file: TCR_scan_v1.yaml
+    params:
+      sensitivity: 0.9
+  - file: perforin_apoptosis_v1.yaml
+    params:
+      field_mode: true
+      granzyme_yield: 1.0
+  - file: secrete_v1.yaml
+    params:
+      substance: IFNg
+      rate: 0.8
+  - file: move_toward_v1.yaml
+    params:
+      chemokine_field: Field_CXCL10
+      speed: 1.4
+  - file: proliferate_v1.yaml
+    params:
+      base_rate: 0.12
+  - file: survival_signal_v1.yaml
+    params: {}
+
+meta_defaults:
+  activation_state: Naive
+  cytotoxic_profile: {}

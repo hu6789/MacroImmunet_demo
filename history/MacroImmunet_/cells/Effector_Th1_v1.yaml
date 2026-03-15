@@ -1,0 +1,38 @@
+id: Effector_Th1_v1
+type: cell
+display_name: "Effector Th1"
+version: 1
+states:
+  - Effector_Th1
+  - Memory_CD4_Early
+  - Memory_CD4_Late
+  - Dead
+
+receptors:
+  - ref: TCR_v1
+    instance_params: { tcr_density: 600 }
+  - ref: IL12R_v1
+    instance_params: { count: 80 }
+  - ref: IFNGR_v1
+    instance_params: { count: 50 }
+  - ref: IL2R_v1
+    instance_params: { count: 150 }
+  - ref: CXCR3_v1
+    instance_params: { count: 40 }
+
+behaviors:
+  - id: TCR_scan_v1
+  - id: secrete_v1
+  - id: move_directed_v1
+  - id: help_CD8_v1
+  - id: proliferate_v1
+  - id: natural_apoptosis_v1
+  - id: become_memory_v1
+
+default_params:
+  secrete_IFNg_rate: 0.05
+  secrete_IL2_rate: 0.03
+  migration_speed: 0.8
+  effector_lifespan_ticks: 720
+  activation_thresh: 0.25
+

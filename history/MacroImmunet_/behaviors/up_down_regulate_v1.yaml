@@ -1,0 +1,24 @@
+id: up_down_regulate_v1
+type: behavior
+meta:
+  description: "Adjust an internal program variable (e.g., adhesion_molecules, inflammatory_program) up or down for a duration."
+params:
+  target: null
+  fold_change: 1.0
+  duration_ticks: 24
+
+actions:
+  - trigger:
+      type: "on_intent"
+      intent: "regulate"
+    outcome:
+      action: "modify_internal"
+      payload:
+        target: "{{ payload.target or params.target }}"
+        fold_change: "{{ payload.fold_change or params.fold_change }}"
+        duration_ticks: "{{ payload.duration_ticks or params.duration_ticks }}"
+notes:
+  - "Engine/implementation should schedule a revert after duration_ticks or decay back to baseline."
+implementation_hint:
+  recommended: "behaviors_impl.regulation.up_down_regulate_v1"
+

@@ -1,0 +1,7 @@
+{
+  "node_id": "PLCg",
+  "node_type": "enzyme",
+  "inputs": ["LAT"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {"w0": 1.2}
+}

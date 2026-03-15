@@ -1,0 +1,43 @@
+id: IL12_driven_diff_v1
+name: "IL-12 Driven Th1 Differentiation (v1)"
+type: behavior
+meta:
+  description: "Behavior used by IL12R downstream to drive Th1 differentiation (helper wrapper)."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - internal: ["IL12_local", "affinity"]
+outputs:
+  - intent: "change_state"
+
+params:
+  K: 0.4
+  n: 2.0
+  base_multiplier: 0.8
+  # whether to emit probability value numerically (recommended)
+  emit_numeric_probability: true
+
+trigger:
+  type: "on_event"   # or called directly by receptor handler
+  event: "IL12_signal"   # optional, engines may call implementation directly
+
+implementation:
+  module: "behaviors_impl.diff"
+  function: "IL12_driven_diff_v1"
+  args:
+    params_ref: params
+    emit_intent_fn: "env.emit_intent"
+    log_fn: "env.log_event"
+
+emits:
+  - intent: "change_state"
+    payload_fields: ["target_state", "probability", "cause", "cell_id", "tick"]
+
+notes:
+  - "Implementation should compute:"
+  - "  il12_h = hill(IL12_local_or_0, K=params.K, n=params.n)"
+  - "  p = clip(params.base_multiplier * il12_h * affinity_or_0, 0.0, 1.0)"
+  - "Then, if params.emit_numeric_probability is true, emit_intent('change_state', {target_state:'Effector_Th1', probability: p, cause:'IL12_driven', cell_id:cell.id, tick:tick})"
+  - "Use safe defaults for missing inputs and record logs for diagnostics."
+

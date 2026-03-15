@@ -1,0 +1,7 @@
+{
+  "node_id": "pMHC",
+  "node_type": "input",
+  "inputs": [],
+  "update_rule": "identity",
+  "params": {}
+}

@@ -1,0 +1,41 @@
+id: TLR_generic_v1
+type: receptor
+display_name: "Generic TLR-like receptor"
+ligand_fields:
+  - "Field_Antigen_Density"
+  - "Field_DAMP"
+description: "Generic PAMP/DAMP sensor for APC activation; triggers costim elevation and IL-12/TNF secretion."
+
+default_params:
+  count: 20
+  # units: k_on [1/(au·tick)], k_off [1/tick]
+  k_on: 0.05
+  k_off: 0.1
+  activation_threshold_nbound: 1
+  integration_window_ticks: 4
+  internalization_on_bind: false
+  refractory_ticks: 4
+
+downstream:
+  on_activation:
+    - behavior: "DC_upregulate_costim"
+      payload: {}
+    - behavior: "secrete_v1"
+      payload:
+        molecule: "IL12"
+        rate_per_tick: 0.2
+        duration_ticks: 24
+    - behavior: "secrete_v1"
+      payload:
+        molecule: "TNF"
+        rate_per_tick: 0.05
+        duration_ticks: 24
+
+notes:
+  - "TLR triggers innate activation and seeding of polarizing cytokines (IL-12) and pro-inflammatory TNF in APCs."
+  - "Implementation should read ligand_fields in priority order and trigger on either PAMP (antigen) or DAMP presence."
+optional: false
+provenance:
+  created: 2025-11-05
+version: 1
+

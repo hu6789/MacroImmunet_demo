@@ -1,0 +1,53 @@
+# draining_ln.yaml
+id: Draining_LN
+type: lymph_node
+name: "Draining Lymph Node"
+description: "Lymph node for priming and clonal expansion; includes specialized T/B zones."
+
+grid:
+  width: 20
+  height: 20
+  resolution: 1.0
+
+capacity:
+  default_per_grid_cell: 10
+  type_specific:
+    small_immune: 12
+
+boundary: reflecting
+
+specialized_regions:
+  - id: t_cell_zone
+    coords_range: [[5,5],[14,14]]
+    effects:
+      activation_bonus: 1.1
+  - id: subcapsular_sinus
+    coords_range: [[0,0],[19,1]]
+    effects:
+      capture_probability_multiplier: 1.2
+  - id: b_cell_follicle
+    coords_range: [[2,15],[6,19]]
+    effects:
+      b_cell_support: true
+
+fields_present:
+  - Field_Antigen_Density
+  - Field_IL2
+  - Field_IL12
+  - Field_DAMP
+enabled_fields: []
+
+initial_population:
+  - template: Naive_CD4_v1
+    count: 200
+  - template: Naive_CD8_v1
+    count: 200
+  - template: DendriticCell_v1
+    count: 10
+
+notes:
+  - "Draining LN should be the place where DC.present events cause high-probability priming of naive T cells within t_cell_zone."
+meta:
+  project: MacroImmunet_demo
+  version: 0.1
+

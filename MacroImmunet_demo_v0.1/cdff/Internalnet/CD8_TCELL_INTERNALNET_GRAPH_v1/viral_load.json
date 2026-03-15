@@ -1,0 +1,6 @@
+{
+  "node_id": "viral_load",
+  "node_type": "input",
+  "inputs": [],
+  "update_rule": "identity"
+}

@@ -1,0 +1,36 @@
+id: Effector_Th2_v1
+type: cell
+display_name: "Effector Th2"
+version: 1
+states:
+  - Effector_Th2
+  - Memory_CD4_Early
+  - Memory_CD4_Late
+  - Dead
+
+receptors:
+  - ref: TCR_v1
+    instance_params: { tcr_density: 600 }
+  - ref: IL4R_v1
+    instance_params: { count: 80 }
+  - ref: IL2R_v1
+    instance_params: { count: 80 }
+  - ref: CCR4_v1
+    instance_params: { count: 30 }
+
+behaviors:
+  - id: TCR_scan_v1
+  - id: secrete_v1            # secrete IL-4/IL-5
+  - id: move_directed_v1
+  - id: natural_apoptosis_v1
+  - id: become_memory_v1
+
+default_params:
+  secrete_IL4_rate: 0.04
+  migration_speed: 0.6
+  effector_lifespan_ticks: 720
+  activation_thresh: 0.25
+
+notes:
+  - "Th2 branch is optional; if IL-4 field is not present some behaviors are no-op."
+

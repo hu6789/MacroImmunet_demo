@@ -1,0 +1,47 @@
+id: IL4_drive_v1
+name: "IL-4 Driven Th2 Differentiation (v1)"
+type: behavior
+meta:
+  description: "Drive Th2 differentiation in Naive CD4 cells when local IL-4 concentration high and other conditions met."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - fields: ["Field_IL4", "Field_IL12"]
+  - internal: ["cell.state", "cell.last_tcr_affinity", "cell.co_stim"]
+
+params:
+  il4_threshold: 0.2
+  affinity_min: 0.10
+  co_stim_requirement: 0.1
+  # hill function params exposed for tuning
+  hill_K: 0.3
+  hill_n: 2.0
+
+trigger:
+  type: "on_event"
+  event: "tcr_scan_result"
+  # engines may or may not support conditions in triggers; implementation should re-validate
+  condition: "cell.state == 'Primed' and cell.last_tcr_affinity >= params.affinity_min"
+
+implementation:
+  module: "behaviors_impl.il4_drive"
+  function: "IL4_drive_v1"
+  args:
+    params_ref: params
+    read_field_fn: "env.read_field"
+    emit_intent_fn: "env.emit_intent"
+    rng_inject: true   # implementation should accept injected RNG for tests
+
+emits:
+  - intent: "change_state"
+    payload_fields: ["target_state", "probability", "cause", "cell_id", "tick"]
+
+notes:
+  - "Implementation should:"
+  - "  1) Read IL4 and IL12 via read_field_fn at cell.coord."
+  - "  2) Check IL4 >= params.il4_threshold, IL12 < some small value (e.g., 0.2) and cell.co_stim >= params.co_stim_requirement."
+  - "  3) Compute p = clip(cell.last_tcr_affinity * (0.25 + 0.75 * hill(IL4, K=params.hill_K, n=params.hill_n)), 0.0, 1.0)."
+  - "  4) Use injected RNG (if provided) to decide random() < p; if true, emit intent change_state with payload {target_state:'Effector_Th2', probability: p, cause:'IL4_drive'}."
+  - "  5) Log decisions (env.log_event) for observability and debugging."
+

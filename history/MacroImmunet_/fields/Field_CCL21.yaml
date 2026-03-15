@@ -1,0 +1,14 @@
+id: Field_CCL21
+display_name: "CCL21 field"
+substance_ref: "../substances/CCL21.yaml"
+type: chemokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.08
+decay_half_life_ticks: 120
+grid_scope: "lymphatic"
+optional: false
+notes:
+  - "Provides long-range gradient from lymphatic endothelium; cooperates with CCL19 for CCR7-mediated homing."
+version: 1
+

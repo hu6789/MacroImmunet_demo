@@ -1,0 +1,30 @@
+id: antigen_release_v1
+type: behavior
+
+meta:
+  description: >
+    On cell death, release a burst of antigen into the local antigen-density field.
+    Release occurs with probability = params.release_probability.
+    Yield = min(release_burst_yield, cell.viral_load * 0.8).
+    Honors global spawn caps if safety.respect_global_spawn_cap = true.
+
+params:
+  release_probability: 0.6
+  release_burst_yield: 20
+  release_min_internal_load: 5.0
+  safety:
+    respect_global_spawn_cap: true
+    max_spawn_per_tick_global: 1000
+  global_cap_strategy: "proportional"
+
+actions:
+  - trigger:
+      type: "on_state_transition"
+      from: ["Infected", "Compromised", "Stressed"]
+      to: ["Dead", "Necrotic"]
+    outcome:
+      action: "call"
+      impl: "behaviors_impl.antigen_release.handle_release_on_death"
+
+implementation_hint:
+  recommended: "behaviors_impl.antigen_release.handle_release_on_death"

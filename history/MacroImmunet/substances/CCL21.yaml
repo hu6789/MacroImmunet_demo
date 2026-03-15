@@ -1,0 +1,20 @@
+id: CCL21
+display_name: "CCL21"
+category: chemokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - "Lymphatic_Endothelium"
+typical_consumers:
+  - "DendriticCell_v1"
+  - "Naive_CD4_v1"
+half_life_ticks: 120
+recommended_field: "Field_CCL21"
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Partners with CCL19 to guide CCR7+ dendritic and naive T cells toward lymphatics and draining LN."
+version: 1
+

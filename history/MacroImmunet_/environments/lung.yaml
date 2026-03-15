@@ -1,0 +1,66 @@
+# lung.yaml
+id: Lung_Tissue_2D
+type: tissue_patch
+name: "Lung Tissue Patch"
+description: "2D lung patch used as infection site; contains epithelial cells and resident immune cells."
+
+grid:
+  width: 50
+  height: 50
+  resolution: 1.0   # grid cell size (arbitrary units)
+
+capacity:
+  default_per_grid_cell: 3
+  type_specific:
+    epithelial: 1
+    large_cells: 1
+    small_immune: 3
+
+boundary: reflecting
+
+special_tiles:
+  - id: airway_surface_zone
+    coords_range: [[20,0],[30,0]]
+    tile_type: airway_surface
+    effects:
+      migration_speed_multiplier: 0.6
+      infectivity_multiplier: 1.2
+
+  - id: typical_injection_site
+    coords_range: [[25,25],[25,25]]
+    tile_type: injection_site
+    effects:
+      initial_antigen_bonus: 1.0
+
+placement_hints:
+  - name: center_region
+    coords_range: [[20,20],[30,30]]
+    preferred_for_spawn: [Epithelial_Lung_Cell_v1, DendriticCell_v1, Macrophage_v1]
+
+fields_present:
+  - Field_Antigen_Density
+  - Field_DAMP
+  - Field_IL12
+  - Field_IFNg
+  - Field_IL2
+  - Field_CXCL10
+  - Field_Cell_Debris
+enabled_fields:
+  - Field_Perforin    # optional (disable to save compute)
+  - Field_Granzyme
+
+initial_population:
+  - template: Epithelial_Lung_Cell_v1
+    density_per_grid: 0.6   # fraction of epithelial slots filled
+  - template: DendriticCell_v1
+    density_per_grid: 0.02
+  - template: Macrophage_v1
+    density_per_grid: 0.03
+
+notes:
+  - "Lung is the main infection arena. Respiratory entrance maps to top border for aerosol deposition."
+  - "Fields include key cytokines for local response; enable perforin/granzyme only if CTL field-mode used."
+meta:
+  project: MacroImmunet_demo
+  version: 0.1
+

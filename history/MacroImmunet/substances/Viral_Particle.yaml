@@ -1,0 +1,27 @@
+# path: substances/Viral_Particle.yaml
+id: Viral_Particle
+display_name: "Viral Particle / Antigen (abstract)"
+category: antigen
+units: "copies"
+default_initial: 0
+typical_producers:
+  - "antigen_release (on lysis)"
+typical_consumers:
+  - "DendriticCell_v1"
+  - "Macrophage_v1"
+half_life_ticks: 96
+recommended_field: "Field_Antigen_Density"
+properties:
+  replication_model: "per-cell"
+  infectivity: 0.02
+  modes_supported: ["field","particle"]
+  default_mode: "field"
+  immune_evasion: {}
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Abstract viral particle used by antigen behaviors. If running particle-mode, adjust loader to spawn particle agents rather than using field only."
+version: 1
+

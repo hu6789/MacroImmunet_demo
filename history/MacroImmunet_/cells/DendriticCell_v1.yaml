@@ -1,0 +1,77 @@
+# cells/DendriticCell_v1.yaml
+id: DendriticCell_v1
+type: cell
+display_name: "Dendritic Cell (DC)"
+version: 1
+
+# High-level states the DC may have
+states:
+  - Immature
+  - Mature
+  - Migrating
+  - Presenting
+  - Dead
+
+# simple geometry / occupancy hints
+volume:
+  cell_volume_units: 1.2
+  radius_grid_units: 0.6
+
+# receptors that this DC expresses (refer to receptors/*.yaml)
+receptors:
+  - ref: TLR_generic_v1
+    instance_params: { count: 60 }
+  - ref: CCR7_v1
+    instance_params: { count: 40, k_on: 0.02 }
+  - ref: MHC_I_v1
+    instance_params: {}
+  - ref: MHC_II_v1
+    instance_params: {}
+  - ref: AntigenPatternR_v1
+    instance_params: {}
+
+# BEHAVIORS
+# use behaviors that already exist in behaviors/ to ensure runnable pipeline:
+# DC_process_and_load_MHC_v1 includes phagocytosis->present->costim steps
+# move_toward_v1 is used by chemokine receptors (e.g., CCR7)
+# random_walk_v1 provides background motility
+behaviors:
+  - id: DC_process_and_load_MHC_v1
+  - id: random_walk_v1
+  - id: phagocytose_v1
+  - id: DC_upregulate_costim
+  - id: present_v1
+  - id: secrete_v1
+  - id: move_toward_v1
+  - id: DC_process_and_load_MHC_v1   # duplicate OK (composite may be invoked multiple times)
+
+# default tunable parameters for DC (can be overridden per-test)
+default_params:
+  antigen_capacity: 5
+  processing_time_ticks: 6
+  il12_secretion_rate: 0.2
+  migration_trigger_score: 0.4
+  presentation_duration_ticks: 240
+
+# runtime cell state fields that behaviors read/write
+cell_state:
+  present_list: []
+  captured_antigens: []
+  co_stim: 0.0
+  antigen_load: 0.0
+  maturation_state: "Immature"
+
+# diagnostic helpers (which events to log)
+diagnostics:
+  log_on_events:
+    - capture_antigen
+    - phagocytosed
+    - pMHC_presented
+    - migrate_to_LN
+    - secrete_IL12
+
+notes:
+  - "Flow assumption: DC_process_and_load_MHC_v1 (composite) orchestrates phagocytosis -> processing -> present -> costim upregulation and may emit migrate_to_LN when threshold met."
+  - "move_toward_v1 is driven by CCR7 downstream; random_walk provides baseline motility."
+  - "Keep parameters in default_params in sync with behavior params that read them (e.g. present_v1, phagocytose_v1)."
+

@@ -1,0 +1,33 @@
+id: antigen_replication_v1
+name: "Antigen Intracellular Replication (v1)"
+type: behavior
+meta:
+  description: "Per-infected-cell intracellular replication: increases cell.viral_load over time; demo-safe."
+  version: "1.0"
+  created: 2025-11-04
+
+params:
+  replication_rate_per_tick: 1.10
+  max_replication_time: 6               # max number of ticks to allow replication since infection
+  min_viral_load_for_burst: 5.0
+  host_required: true
+  max_replication_per_cell_per_tick: 20
+  max_internal_viral_load: 1000.0
+
+# trigger: engine may call this for each cell each tick, or implementation can be used
+trigger:
+  type: "time"
+  condition: "ticks_since_last_replication >= 1 and cell.state == 'Infected' and cell.viral_load > 0"
+
+implementation:
+  module: "behaviors_impl.antigen_replication"
+  function: "replicate_intracellular"
+  args:
+    params_ref: params
+    infection_timer_field: "infection_timer"
+    viral_load_field: "viral_load"
+
+notes:
+  - "Implementation should: check infection_timer < params.max_replication_time, compute growth = viral_load*(replication_rate_per_tick-1), clamp spawned to max_replication_per_cell_per_tick, clamp final viral_load to max_internal_viral_load, increment infection_timer."
+  - "If host_required is true, engine must ensure this behavior only applies to infected cells."
+

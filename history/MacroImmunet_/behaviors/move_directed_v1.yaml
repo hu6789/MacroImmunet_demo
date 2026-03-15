@@ -1,0 +1,46 @@
+id: move_directed_v1
+name: "Move Directed (v1)"
+type: behavior
+meta:
+  description: "Convert a direction vector or target coordinate to a move intent (neighbor coord) and try to move."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - internal: ["cell.coord", "target_coord", "dir_vector"]
+  - env_api: ["env.coord_move_by_vector", "env.coord_has_capacity", "env.get_neighbors"]
+
+params:
+  max_step_distance: 1.0
+  obstacle_retry: 3
+  retry_strategy: "prefer_forward"   # "prefer_forward" | "random" | "least_crowded"
+  allow_diagonal: false
+  boundary_mode: "clip"              # "clip" | "wrap" | "reflect" (engine-specific)
+
+trigger:
+  type: "on_intent"
+  intent: "move_directed"            # or time-driven; engines vary
+
+implementation:
+  module: "behaviors_impl.move_directed"
+  function: "move_directed_v1"
+  args:
+    params_ref: params
+    coord_move_by_vector_fn: "env.coord_move_by_vector"
+    coord_has_capacity_fn: "env.coord_has_capacity"
+    get_neighbors_fn: "env.get_neighbors"
+    emit_intent_fn: "env.emit_intent"
+    rng_inject: true
+
+emits:
+  - intent: "move"
+    payload_fields: ["from", "to", "attempt_index", "reason"]
+
+notes:
+  - "Implementation should:"
+  - " 1) Resolve target: if dir_vector provided, call coord_move_by_vector_fn(cell.coord, dir_vector, max_step_distance) -> candidate; else compute step_towards(cell.coord, target_coord, max_step_distance)."
+  - " 2) If candidate is valid and coord_has_capacity_fn(candidate) is True, emit move intent with payload {from:cell.coord, to:candidate, attempt_index:0}."
+  - " 3) If blocked, try up to params.obstacle_retry alternative neighbors using params.retry_strategy (get_neighbors_fn should return ordered neighbor list). For each try increment attempt_index and include reason 'blocked' or 'fallback'."
+  - " 4) If no free neighbor found, emit no intent and optionally log env.log_event for debugging."
+  - " 5) All coordinates must be in canonical serializable form (e.g., {x:int,y:int}) for intents."
+

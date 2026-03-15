@@ -1,0 +1,20 @@
+id: CCR4_v1
+type: receptor
+display_name: "CCR4"
+ligand_field: Field_CCL21   # placeholder
+description: "Placeholder CCR4 receptor (stub)."
+default_params:
+  count: 30
+  k_on: 0.02
+  k_off: 0.04
+  activation_threshold_nbound: 1
+  integration_window_ticks: 8
+downstream:
+  on_activation:
+    - behavior: move_toward_v1
+      payload:
+        mode: chemotaxis
+        chemokine: Field_CCL21
+notes:
+  - "Stub implementation; replace ligand_field as needed."
+version: 1

@@ -1,0 +1,7 @@
+{
+  "node_id": "p53",
+  "node_type": "internal",
+  "inputs": ["stress_signal"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {"w0": 1.5}
+}

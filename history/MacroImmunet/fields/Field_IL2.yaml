@@ -1,0 +1,14 @@
+id: Field_IL2
+display_name: "IL-2 field"
+substance_ref: "../substances/IL2.yaml"
+type: cytokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.06
+decay_half_life_ticks: 120
+grid_scope: "local"
+optional: false
+notes:
+  - "Drives T cell proliferation and survival; acts locally (paracrine)."
+version: 1
+

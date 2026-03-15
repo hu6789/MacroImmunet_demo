@@ -1,0 +1,38 @@
+id: GenericInflammatoryR_v1
+type: receptor
+display_name: "Generic Inflammatory Receptor"
+ligand_fields:
+  - "Field_TNF"
+  - "Field_IL6"
+  - "Field_DAMP"
+description: "Aggregates generic inflammatory signals (TNF, IL-6, DAMP) to modulate activation/adhesion/inflammation programs."
+
+default_params:
+  count: 120
+  k_on: 0.01
+  k_off: 0.02
+  activation_threshold_integral: 8
+  integration_window_ticks: 24
+  refractory_ticks: 6
+  # optional per-field weights to tune relative influence
+  field_weights:
+    Field_TNF: 1.0
+    Field_IL6: 0.8
+    Field_DAMP: 0.6
+
+downstream:
+  on_activation:
+    - behavior: up_down_regulate_v1
+      payload:
+        target: adhesion_molecules
+        fold_change: 1.3
+        duration_ticks: 48
+
+notes:
+  - "This receptor aggregates multiple inflammatory mediators; field_weights allow tuning each field's contribution to the aggregate signal."
+  - "Use integration_window_ticks to smooth transient spikes; refractory_ticks prevents repeated immediate triggers."
+optional: false
+provenance:
+  created: 2025-11-11
+version: 2
+

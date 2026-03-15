@@ -1,0 +1,21 @@
+id: IFNg
+display_name: "Interferon-gamma (IFN-γ)"
+category: cytokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - Effector_Th1_v1
+  - Effector_CTL_v1
+typical_consumers:
+  - Macrophage_v1
+  - Epithelial_Lung_Cell_v1
+half_life_ticks: 180
+recommended_field: Field_IFNg
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Effector cytokine produced by Th1 and CTLs; activates macrophages, induces CXCL10, promotes antiviral state."
+version: 1
+

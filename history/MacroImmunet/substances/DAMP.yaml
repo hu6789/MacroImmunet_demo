@@ -1,0 +1,20 @@
+id: DAMP
+display_name: "Damage-associated molecular pattern (DAMP)"
+category: danger_signal
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - "lysed_cells"
+  - "necrotic_cells"
+typical_consumers:
+  - "Phagocytes (indirect)"
+half_life_ticks: 60
+recommended_field: "Field_DAMP"
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Signals tissue damage; attracts and activates phagocytes and APCs."
+version: 1
+

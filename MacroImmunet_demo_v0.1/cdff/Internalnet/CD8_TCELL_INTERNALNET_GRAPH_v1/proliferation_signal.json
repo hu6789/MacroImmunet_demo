@@ -1,0 +1,9 @@
+{
+  "id": "proliferation_signal",
+  "type": "output",
+  "inputs": ["IL2","ATP_level"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {
+    "w0": 1.0
+  }
+}

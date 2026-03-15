@@ -1,0 +1,30 @@
+# blood_vessel.yaml
+id: Blood_Vessel
+type: conduit
+name: "Blood Vessel (Conduit)"
+description: "Abstract blood conduit for fast systemic transport (particles only in demo)."
+
+grid:
+  width: 50
+  height: 2
+  resolution: 1.0
+
+behavior:
+  flow_direction: along_x
+  bandwidth: medium
+
+capacity:
+  per_segment: 1000
+
+boundary: absorbing
+
+fields_present:
+  - Field_Antigen_Density
+enabled_fields: []
+
+notes:
+  - "Blood vessel carries free antigen/particles rapidly; used for spillover events."
+meta:
+  project: MacroImmunet_demo
+  version: 0.1
+

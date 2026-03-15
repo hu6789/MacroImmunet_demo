@@ -1,0 +1,35 @@
+id: CCR7_v1
+type: receptor
+display_name: "CCR7"
+ligand_fields:
+  - "Field_CCL19"
+  - "Field_CCL21"
+description: "Chemokine receptor guiding migration to lymphatic/LN regions (responds to CCL19 and CCL21)."
+
+default_params:
+  count: 50
+  k_on: 0.02
+  k_off: 0.05
+  activation_threshold_nbound: 1
+  integration_window_ticks: 12
+  chemotactic_sensitivity: 0.9
+  allow_dual_ligand: true
+
+downstream:
+  on_activation:
+    - behavior: "move_toward_v1"
+      payload:
+        mode: "chemotaxis"
+        preferred_fields:
+          - "Field_CCL19"
+          - "Field_CCL21"
+        speed_units_per_tick: 1.2
+
+notes:
+  - "CCL19 and CCL21 share CCR7; CCL21 provides long-range gradient from lymphatic endothelium, CCL19 sharpens LN microgradients."
+  - "Engine should query both ligand fields; choose strongest gradient per tick."
+optional: false
+provenance:
+  created: 2025-11-05
+version: 2
+

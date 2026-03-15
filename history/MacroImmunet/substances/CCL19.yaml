@@ -1,0 +1,21 @@
+id: CCL19
+display_name: "CCL19"
+category: chemokine
+units: "au"                # arbitrary simulation units
+default_initial: 0.0
+typical_producers:
+  - "Lymphatic_Stromal"
+  - "Mature_DendriticCell_v1"
+typical_consumers:
+  - "DendriticCell_v1"
+  - "Naive_CD4_v1"
+half_life_ticks: 120
+recommended_field: "Field_CCL19"
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Lymph node homing chemokine; guides CCR7+ cells to lymphatic/lymph node regions."
+version: 1
+

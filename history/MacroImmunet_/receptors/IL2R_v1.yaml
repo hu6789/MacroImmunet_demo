@@ -1,0 +1,26 @@
+id: IL2R_v1
+type: receptor
+display_name: "IL-2 Receptor (tuned)"
+ligand_field: "Field_IL2"
+description: "Tuned IL-2 receptor (conservative defaults). Units: k_on [1/(au·tick)], k_off [1/tick]."
+
+default_params:
+  count: 50
+  k_on: 0.002
+  k_off: 0.02
+  activation_threshold_nbound: 3
+  activation_threshold_integral: 40
+  integration_window_ticks: 24
+  refractory_ticks: 6
+downstream:
+  on_activation:
+    - behavior: "survival_signal_v1"
+      payload:
+        survival_boost: 0.2
+    - behavior: "proliferate_v1"
+      payload:
+        divisions: 1
+notes:
+  - "Tuned conservative defaults to avoid over-triggering on small spikes."
+version: 1
+

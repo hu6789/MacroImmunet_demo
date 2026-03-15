@@ -1,0 +1,35 @@
+# scenario_demo_lung.yaml
+scenario_id: demo_lung_small
+spaces:
+  - id: Respiratory_Entrance
+    grid: [12, 6]
+  - id: Lung_Tissue_2D
+    grid: [60, 40]
+  - id: Lymphatic_Vessel
+    grid: [30, 20]
+  - id: Draining_LN
+    grid: [40, 30]
+  - id: Blood_Vessel
+    grid: [40, 10]
+
+antigen_seed:
+  source: Respiratory_Entrance
+  target: Lung_Tissue_2D
+  mapping: border_top_to_top
+  n_particles: 30
+  tick: 0
+
+master_defaults:
+  hotspot_threshold: 0.95
+  scan_radius: 1.5
+  max_hotspots: 3
+  infection_intent_strength: 0.1
+  APC_boost_strength: 0.05
+  Tcell_recruit_gain: 0.1
+
+percell_defaults:
+  Th2:
+    affinity_thresh: 0.7
+    require_pMHC: true
+    decision_latency: 0
+

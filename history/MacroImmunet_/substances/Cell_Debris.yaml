@@ -1,0 +1,20 @@
+id: Cell_Debris
+display_name: "Cell Debris"
+category: debris
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - lysed_cells
+  - necrotic_cells
+typical_consumers:
+  - Macrophage_v1
+half_life_ticks: 480
+recommended_field: Field_Cell_Debris
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Slowly-diffusive debris. Phagocytes clear debris and may activate upon sensing high debris."
+version: 1
+

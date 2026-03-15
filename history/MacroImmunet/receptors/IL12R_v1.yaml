@@ -1,0 +1,35 @@
+id: IL12R_v1
+type: receptor
+display_name: "IL-12 Receptor"
+ligand_field: "Field_IL12"
+description: "IL-12 receptor; biases naive CD4 toward Th1 through STAT4/T-bet axis (abstracted)."
+
+default_params:
+  count: 100
+  # units: k_on [1/(au·tick)], k_off [1/tick]
+  k_on: 0.005
+  k_off: 0.01
+  activation_threshold_nbound: 5
+  activation_threshold_integral: 20
+  integration_window_ticks: 48
+  internalization_on_bind: true
+  internalization_duration_ticks: 24
+  refractory_ticks: 6
+
+downstream:
+  on_activation:
+    - behavior: "IL12_driven_diff_v1"
+      # NOTE: probability_expr is an expression-string; implementer should evaluate it
+      # in a safe, numeric context after computing bound_integral (pass bound_integral in payload).
+      payload:
+        to_state: "Effector_Th1"
+        probability_expr: "min(1.0, 0.8 * (bound_integral / 20.0))"
+
+notes:
+  - "IL-12 acts as a polarizing cytokine; use an integral-driven activation that maps to differentiation probability."
+  - "Implementation must compute bound_integral (same units as threshold) and evaluate probability_expr numerically (do not eval arbitrary strings directly)."
+optional: false
+provenance:
+  created: 2025-11-05
+version: 1
+

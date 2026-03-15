@@ -1,0 +1,20 @@
+id: TNF
+display_name: "Tumor Necrosis Factor alpha (TNF-α)"
+category: cytokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - Macrophage_v1
+  - Epithelial_Lung_Cell_v1
+typical_consumers:
+  - Multiple_cell_types
+half_life_ticks: 120
+recommended_field: Field_TNF
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Pro-inflammatory mediator; contributes to inflammatory damage and may drive inflammatory_death behavior at high local concentrations."
+version: 1
+

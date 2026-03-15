@@ -1,0 +1,64 @@
+# cells/Macrophage_v1.yaml
+type: Macrophage
+version: v1
+description: |
+  Demo macrophage: patrols, phagocytoses antigen/debris, processes and
+  contributes to inflammation (secretes TNF/IL6), presents antigen (MHC-II)
+  and can undergo inflammatory death. Minimal but end-to-end for demo.
+
+states:
+  - Patrol
+  - Activated
+  - Engaged
+  - Dead
+
+links:
+  receptors:
+    - AntigenPatternR_v1  # PRR for PAMPs / debris
+    - MHC_II_v1           # for antigen presentation
+    - CCR7_v1             # optional for LN migration if activated
+
+  fields:
+    - Field_Antigen_Density
+    - Field_Cell_Debris
+    - Field_TNF
+    - Field_IL6
+    - Field_IFNg
+
+  agents:
+    - Antigen_SARS_like_001
+
+behaviors:
+  # 1) random patrol
+  - random_walk_v1.yaml
+
+  # 2) phagocytose antigen/debris from field
+  - phagocytose_v1.yaml
+
+  # 3) process & present (adds to present_list / emits pMHC_presented)
+  - DC_process_and_load_MHC_v1.yaml   # reuse DC processing logic for demo
+
+  # 4) secrete pro-inflammatory cytokines when activated
+  - secrete_v1.yaml
+
+  # 5) inflammatory death when over-activated or infected
+  - inflammatory_death_v1.yaml
+
+  # 6) baseline survival / turnover
+  - natural_apoptosis_v1.yaml
+
+params:
+  phagocytose_capacity: 4
+  processing_rate: 1
+  activation_threshold: 0.5   # co_stim-like or PRR signal threshold
+  costim_increase_on_phago: 0.3
+  tnf_secrete_rate: 1.0
+  il6_secrete_rate: 0.5
+
+meta:
+  present_list: []
+  captured_antigens: []
+  activation_score: 0.0
+  state: Patrol
+  coord: null
+

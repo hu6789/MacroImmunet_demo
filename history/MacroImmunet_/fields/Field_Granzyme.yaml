@@ -1,0 +1,14 @@
+id: Field_Granzyme
+display_name: "Granzyme field"
+substance_ref: "../substances/Granzyme.yaml"
+type: effector
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.02
+decay_half_life_ticks: 10
+grid_scope: "local"
+optional: true
+notes:
+  - "Works with perforin to induce target apoptosis; optional heavy-weight field."
+version: 1
+

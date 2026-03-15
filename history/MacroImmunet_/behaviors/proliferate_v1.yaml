@@ -1,0 +1,47 @@
+id: proliferate_v1
+name: "Proliferation / Clonal Expansion (v1)"
+type: behavior
+meta:
+  description: "Schedule and execute cell division (clonal expansion). Env creates daughter cells."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - internal: ["cell.division_request", "cell.template_id", "cell.coord", "cell.clone_id"]
+  - payload_schema: { "delay": {"type":"int", "required": false}, "daughter_count": {"type":"int", "required": false} }
+
+params:
+  division_delay_ticks: 48
+  daughter_count: 1
+  clone_id_preserve: true
+  max_total_divisions_per_clone: 100    # safety to avoid runaway
+  spawn_retry: 3
+  spawn_retry_backoff_ticks: 1
+  spawn_strategy: "nearest_free"       # "nearest_free" | "random_neighbor" | "preferred_slot"
+  require_reservation: true            # use env.reserve_coord before spawn
+
+trigger:
+  type: "on_intent"
+  intent: "proliferate"
+
+implementation:
+  module: "behaviors_impl.proliferate"
+  function: "proliferate_v1"
+  args:
+    params_ref: params
+    find_free_fn: "env.find_free_neighbor"
+    reserve_fn: "env.reserve_coord"
+    spawn_fn: "env.spawn_cell"
+    emit_event_fn: "env.emit_event"
+    log_fn: "env.log_event"
+    rng_inject: true
+
+emits:
+  - event: "divided"
+    payload_fields: ["parent_id","daughter_ids","coords","clone_id","tick"]
+  - event: "post_expansion"
+    payload_fields: ["parent_id","total_divisions_for_clone","tick"]
+
+notes:
+  - "Implementation should: schedule division (store scheduled tick), at execution find free neighbor coords (one per daughter), optionally reserve them, spawn daughters via spawn_fn with template and clone metadata, update parent cell (division_pending=false, division_count++), increment clone-level division counter and emit structured events. On spawn failure attempt retries per params.spawn_retry, and release reservations on final failure."
+

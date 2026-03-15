@@ -1,0 +1,9 @@
+{
+  "id": "LAT",
+  "type": "signal",
+  "inputs": ["ZAP70"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {
+    "w0": 1.4
+  }
+}

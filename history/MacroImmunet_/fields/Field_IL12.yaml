@@ -1,0 +1,14 @@
+id: Field_IL12
+display_name: "IL-12 field"
+substance_ref: "../substances/IL12.yaml"
+type: cytokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.05
+decay_half_life_ticks: 240
+grid_scope: "local"
+optional: false
+notes:
+  - "IL-12 spatial concentration; produced by DC/macrophage; promotes Th1 differentiation."
+version: 1
+

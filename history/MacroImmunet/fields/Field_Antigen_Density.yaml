@@ -1,0 +1,16 @@
+# path: fields/Field_Antigen_Density.yaml
+id: Field_Antigen_Density
+display_name: "Antigen / Viral particle density"
+substance_ref: "../substances/Viral_Particle.yaml"
+type: antigen
+units: "copies"
+default_initial: 0
+# demo-tuned diffusion / decay to avoid rapid global spread
+diffusion_coefficient: 0.08
+decay_half_life_ticks: 24
+grid_scope: "tissue"
+optional: false
+notes:
+  - "Antigen concentration field used for phagocytosis/infection probability and antigen_replication hooks."
+version: 1
+

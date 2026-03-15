@@ -1,0 +1,46 @@
+id: Naive_CD8_v1
+type: cell
+display_name: "Naive CD8 T cell"
+version: 1
+states:
+  - Naive
+  - Primed
+  - Effector_CTL
+  - Memory_CD8
+  - Dead
+
+receptors:
+  - ref: TCR_v1
+    instance_params:
+      tcr_density: 1000
+      repertoire_size: 20
+  - ref: IL2R_v1
+    instance_params: { count: 200 }
+  - ref: CD28_v1
+    instance_params: { count: 150 }
+  - ref: CCR5_v1
+    instance_params: { count: 40 }
+
+behaviors:
+  - id: random_walk_v1
+  - id: TCR_scan_v1
+  - id: IL2_proliferation_v1
+  - id: proliferate_v1
+  - id: differentiate_v1
+  - id: become_memory_v1
+  - id: perforin_apoptosis_v1
+
+default_params:
+  activation_thresh: 0.35
+  proliferation_delay_ticks: 48
+  division_limit: 8
+  memory_prob_per_division: 0.06
+  kill_probability_base: 0.20  # slightly reduced base
+
+metadata:
+  lineage_template_ref: "specs/T_cell_lineage.yaml::CD8"
+  lineage_tracking: true
+
+notes:
+  - "Priming of CD8 may require help (IL-2) or strong co-stim; TCR_scan_v1 should return affinity used by CD8 lineage rules."
+

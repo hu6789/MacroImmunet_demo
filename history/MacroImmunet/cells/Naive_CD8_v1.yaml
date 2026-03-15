@@ -1,0 +1,41 @@
+id: Naive_CD8_v1
+name: Naive CD8 T cell (demo)
+version: 1
+description: |
+  Minimal Naive CD8 (precursor to effector CTL) used by demo/unit tests.
+  Contains TCR scanning and ability to differentiate into Effector_CTL_v1 on
+  appropriate signals (high affinity pMHC-I + CD28 costim).
+type: cell
+default_state: Naive
+
+behaviors:
+  - TCR_scan_v1.yaml
+  - natural_apoptosis_v1.yaml
+  - move_toward_v1.yaml
+  - proliferate_v1.yaml
+  - differentiate_v1.yaml
+  - perforin_apoptosis_v1.yaml
+
+receptors:
+  - TCR_v1.yaml
+  - CCR7_v1.yaml
+  - CD28_v1.yaml
+
+params:
+  basal_motility: 0.6
+  activation_affinity_threshold: 0.7
+  activation_co_stim_requirement: 0.3
+  default_proliferation_rate: 1.2
+  differentiation:
+    CTL:
+      trigger: "high-affinity pMHC-I + CD28"
+      prob: 0.95
+      behaviors:
+        - perforin_apoptosis_v1.yaml
+        - proliferate_v1.yaml
+
+notes: |
+  - For tests, set env.compute_affinity to return affinities that cross thresholds.
+  - The directory structure and behavior filenames match the demo repo layout.
+
+meta_defaults: {}

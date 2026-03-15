@@ -1,0 +1,41 @@
+id: differentiate_v1
+name: "Differentiate / Change State (v1)"
+type: behavior
+meta:
+  description: "Handle change_state intents: perform probabilistic or deterministic state changes and log lineage."
+  version: "1.0"
+  created: 2025-11-05
+
+params:
+  allow_history: true
+  history_max_len: 10
+
+trigger:
+  type: "on_intent"
+  intent: "change_state"
+
+# Delegate probabilistic logic and state mutation to implementation.
+implementation:
+  module: "behaviors_impl.differentiate"
+  function: "differentiate_v1"
+  args:
+    params_ref: params
+    # expected payload schema for implementation:
+    # payload: { "target_state": str, "probability": float (0..1) optional, "cause": str optional }
+    payload_schema:
+      target_state: {type: "string", required: true}
+      probability: {type: "float", required: false, default: 1.0}
+      cause: {type: "string", required: false}
+
+emits:
+  - event: "state_changed"
+    payload_fields: ["cell_id", "prev_state", "new_state", "cause", "tick"]
+
+notes:
+  - "Implementation responsibilities:"
+  - "  * Resolve probability = payload.probability if present else 1.0; validate in [0,1]."
+  - "  * Use injected RNG / seeded RNG for tests to ensure reproducibility."
+  - "  * If random() < probability then perform atomic update: prev_state = cell.state; cell.state = payload.target_state; cell.last_state_change_tick = tick."
+  - "  * If params.allow_history is true, append an entry to cell.state_history (capped to params.history_max_len)."
+  - "  * Emit event 'state_changed' with explicit JSON payload and call env.log_lineage(...) (log should never raise)."
+

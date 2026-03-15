@@ -1,0 +1,42 @@
+id: natural_apoptosis_v1
+name: "Natural / Age-related Apoptosis (v1)"
+type: behavior
+meta:
+  description: "Programmed/age-related apoptosis; scheduled lifespan-based death."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - internal: ["cell.birth_tick", "cell.age_ticks"]
+outputs:
+  - intent: "apoptosis"
+
+params:
+  lifespan_ticks: 20000
+  probability_per_tick_after_age: 0.01
+  early_stochastic_fraction: 0.8   # fraction of lifespan after which stochastic death may occur
+
+trigger:
+  type: "time"
+  condition: "ticks % 1 == 0"
+
+implementation:
+  module: "behaviors_impl.natural_apoptosis"
+  function: "natural_apoptosis_v1"
+  args:
+    params_ref: params
+    emit_intent_fn: "env.emit_intent"
+    log_fn: "env.log_event"
+    rng_inject: true
+
+emits:
+  - intent: "apoptosis"
+    payload_fields: ["cell_id","cause","age","tick","probability"]
+
+notes:
+  - "Implementation responsibilities:"
+  - "  * Compute age = tick - cell.birth_tick (treat missing birth_tick as current tick => age 0)."
+  - "  * If age >= params.lifespan_ticks -> emit apoptosis with payload {cause:'age'} deterministically."
+  - "  * Else if age >= params.lifespan_ticks * params.early_stochastic_fraction, compute p = params.probability_per_tick_after_age and use injected RNG to sample; if sample < p, emit apoptosis with payload {cause:'stochastic_age', probability:p}."
+  - "  * Log decisions (age,p,rand) for observability and tests."
+

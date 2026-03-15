@@ -1,0 +1,14 @@
+id: Field_TNF
+display_name: "TNF-alpha field"
+substance_ref: "../substances/TNF.yaml"
+type: cytokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.06
+decay_half_life_ticks: 120
+grid_scope: "local"
+optional: false
+notes:
+  - "Pro-inflammatory mediator; contributes to inflammatory death logic."
+version: 1
+

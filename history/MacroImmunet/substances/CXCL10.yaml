@@ -1,0 +1,20 @@
+id: CXCL10
+display_name: "CXCL10 (IP-10)"
+category: chemokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - "IFNg_stimulated_cells"
+typical_consumers:
+  - "Effector_Th1_v1"
+  - "Effector_CTL_v1"
+half_life_ticks: 120
+recommended_field: "Field_CXCL10"
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Recruits CXCR3+ effector T cells; often induced downstream of IFN-γ."
+version: 1
+

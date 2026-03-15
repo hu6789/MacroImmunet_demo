@@ -1,0 +1,52 @@
+id: antigen_diffusion_hook_v1
+name: "Antigen Diffusion Hook (v1)"
+type: behavior
+meta:
+  description: "Hook to initiate antigen diffusion update. Engine should compute deltas then apply atomically."
+  version: "1.0"
+  created: 2025-11-04
+
+# 明确目标 field（使用时场景/engine 可覆盖）
+target_field: "Field_Antigen_Density"
+
+params:
+  diffusion_rate: 0.05
+  diffusion_radius: 5
+  max_diffusion_ticks: 10
+  # advisory: engine should compare dt to dx^2/(4*D) (see note)
+  recommended_dt_bound_for_CFL: 0.25
+  safety:
+    require_atomic_apply: true
+    max_local_density_per_cell: 200
+
+# validation hints for a sanity-checker/engine
+validate:
+  required_params: ["diffusion_rate", "diffusion_radius"]
+  types:
+    diffusion_rate: "float"
+    diffusion_radius: "int"
+
+actions:
+  - trigger:
+      type: "time"
+      condition: "ticks_since_last_diffusion >= 1"
+    outcome:
+      action: "diffuse"
+      effect: "spread_antigen"
+      target_field: "{{ target_field }}"
+      diffusion_factor: "{{ params.diffusion_rate }}"
+      diffusion_radius: "{{ params.diffusion_radius }}"
+      max_ticks: "{{ params.max_diffusion_ticks }}"
+
+implementation:
+  module: "behaviors_impl.antigen_diffusion"
+  function: "antigen_diffusion_hook_v1"
+  args:
+    params_ref: params
+    target_field_ref: target_field
+
+notes:
+  - "Implementation hint: do not write neighbor values in-place while iterating; compute deltas then apply atomically."
+  - "CFL stability (explicit scheme) typically requires dt <= dx^2/(4*D) under the assumptions used here; engine should compute actual bound using its dx and dimensionality."
+  - "recommended_dt_bound_for_CFL is advisory and may be set more conservatively by scenarios."
+

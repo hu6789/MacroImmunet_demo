@@ -1,0 +1,46 @@
+id: move_toward_v1
+name: "Move Toward / Chemotaxis Helper (v1)"
+type: behavior
+meta:
+  description: "Chemotaxis helper: compute best neighbor toward chemokine gradient or target coord and emit move intent."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - payload_schema:
+      mode: {type:"string", enum:["chemotaxis","target"], required:true}
+      chemokine: {type:"string", required:false}      # field name
+      target_coord: {type:"coord", required:false}
+
+params:
+  max_step_distance: 1.0
+  sensitivity: 1.0
+  allow_diagonal: false
+  capacity_check: true
+  tie_break_strategy: "least_crowded"  # "random" | "least_crowded" | "prefer_forward"
+
+trigger:
+  type: "on_intent"
+  intent: "move_toward"
+
+implementation:
+  module: "behaviors_impl.move_toward"
+  function: "move_toward_v1"
+  args:
+    params_ref: params
+    find_best_neighbor_fn: "env.find_best_neighbor_by_field_gradient"
+    coord_has_capacity_fn: "env.coord_has_capacity"
+    emit_intent_fn: "env.emit_intent"
+    delegate_move_directed: "behaviors.move_directed_v1"
+    rng_inject: true
+
+emits:
+  - intent: "move"
+    payload_fields: ["from","to","reason","score","tick"]
+
+notes:
+  - "Implementation should: for payload.mode=='chemotaxis' call find_best_neighbor_by_field_gradient(cell.coord, chemokine, params.max_step_distance, sensitivity) which returns a canonical neighbor coord or null."
+  - "If best found, validate coord_has_capacity_fn(best) (if enabled). If free, emit move intent; if blocked try tie_break_strategy alternatives."
+  - "If payload.mode != 'chemotaxis' but payload.target_coord provided, delegate to move_directed implementation."
+  - "Ensure returned coords are canonical (e.g., {'x':int,'y':int}) and quantize/clip if floating-point results returned by gradient function."
+

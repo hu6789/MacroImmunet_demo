@@ -1,0 +1,14 @@
+id: Field_Cell_Debris
+display_name: "Cell debris field"
+substance_ref: "../substances/Cell_Debris.yaml"
+type: debris
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.005
+decay_half_life_ticks: 480
+grid_scope: "local"
+optional: false
+notes:
+  - "Slowly-diffusive debris; phagocytes clear it and may be activated by local debris."
+version: 1
+

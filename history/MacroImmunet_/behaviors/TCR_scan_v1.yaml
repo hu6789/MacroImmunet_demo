@@ -1,0 +1,41 @@
+id: TCR_scan_v1
+name: "TCR Scan Local pMHC (v1)"
+type: behavior
+meta:
+  description: "Scan local pMHC presentations and compute affinity for TCR repertoire; emits 'tcr_scan_result' with best_affinity and matched_pMHC."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - internal: ["cell.tcr_repertoire", "cell.coord"]
+  - env_api: ["env.collect_pMHC_near", "receptor_api.compute_affinity"]
+
+params:
+  scan_radius: 1
+  affinity_threshold_report: 0.01
+  max_candidates: 200         # safety cap to avoid huge loops
+  early_stop_on_high_affinity: true
+  early_stop_threshold: 0.9   # if affinity >= this, stop scanning
+
+trigger:
+  type: "time"
+  condition: "ticks % 1 == 0"
+
+implementation:
+  module: "behaviors_impl.tcr_scan"
+  function: "TCR_scan_v1"
+  args:
+    params_ref: params
+    collect_pMHC_fn: "env.collect_pMHC_near"
+    compute_affinity_fn: "receptor_api.compute_affinity"  # or cell.call_receptor wrapper
+    emit_event_fn: "env.emit_event"
+    log_fn: "env.log_event"
+    rng_inject: false
+
+emits:
+  - event: "tcr_scan_result"
+    payload_fields: ["cell_id","best_affinity","pmhc_id_or_summary","tick"]
+
+notes:
+  - "Implementation should avoid returning huge pmhc objects in events; prefer sending pmhc.id and a small summary (epitope id, mhc_type, affinity)."
+

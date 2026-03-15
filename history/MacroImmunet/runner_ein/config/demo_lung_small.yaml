@@ -1,0 +1,130 @@
+# environments/demo_lung_small.yaml
+scene_id: demo_lung_small
+description: >
+  Small demo: antigen enters from respiratory entrance and drifts
+  into lung zone; DCs can phagocytose & present; naive CD4 may differentiate
+  to Th1/Th2; Th2 uses percell logic. Meant to be light-weight for VMs.
+
+layout_ref: environment/layout.yaml
+
+grid:
+  width: 60
+  height: 40
+  toroidal: false
+
+runtime:
+  max_ticks: 200
+  seed: 20251119
+  tick_dt: 1.0
+
+fields:
+  Field_Antigen_Density:
+    diffusion_coeff: 0.12
+    decay: 0.01
+  Field_Cell_Debris:
+    diffusion_coeff: 0.02
+    decay: 0.05
+  Field_CCL19:
+    diffusion_coeff: 0.25
+    decay: 0.02
+
+zones:
+  respiratory_entrance:
+    bbox: [{x:0, x2:59}, {y:0, y2:3}]
+  lung_region:
+    bbox: [{x:5, x2:54}, {y:6, y2:34}]
+  draining_ln_site:
+    bbox: [{x:50, x2:59}, {y:0, y2:3}]
+
+antigen_influx:
+  pulses:
+    - start_tick: 0
+      duration_ticks: 6
+      location: respiratory_entrance
+      total_amount: 300
+      flux_vector: [0.0, 1.0]
+      spread_sigma: 2.0
+  background:
+    rate_per_tick: 0.5
+    source_zone: respiratory_entrance
+
+initial_cells:
+  Epithelial_Lung_Cell:
+    placement: region
+    region: lung_region
+    density: 0.35
+    meta_defaults:
+      viral_load: 0.0
+
+  DendriticCell:
+    placement: scatter
+    count: 8
+    region: lung_region
+
+  Naive_CD4:
+    placement: scatter
+    count: 12
+    region: draining_ln_site
+
+masters:
+  - name: LungMaster
+    handles: ["Epithelial_Lung_Cell", "Field_Antigen_Density"]
+    mode: healthy
+    scan_interval_ticks: 2
+    hotspot_threshold: 1.0
+
+  - name: DCMaster
+    handles: ["DendriticCell"]
+    mode: surveillance
+    scan_interval_ticks: 3
+    params:
+      antigen_threshold: 0.5
+      debris_threshold: 0.2
+      max_hotspots: 3
+      il12_deposit_per_hotspot: 2.0
+      deposit_cap: 6.0
+      recruit_prob_per_hotspot: 0.8
+      norm_score: 10.0
+      max_intents_per_tick: 4
+
+  - name: TCellMaster
+    handles: ["Naive_CD4"]
+    mode: idle
+    scan_interval_ticks: 4
+
+percell:
+  enabled: true
+  types:
+    Th2:
+      enabled: true
+      decision_latency_ticks: 2
+
+params:
+  infection:
+    default_invasion_probability: 0.9
+    replication_rate: 1.4
+  antigen:
+    seed_spread_sigma: 2.0
+  masters:
+    max_spawn_per_tick: 50
+
+stop_conditions:
+  - type: max_ticks
+    value: 200
+  - type: antigen_below_threshold
+    field: Field_Antigen_Density
+    threshold: 1.0
+    sustained_ticks: 10
+
+masters:
+  - name: TCellMaster
+    module: runner_ein.masters.tcell_master
+    class: TCellMaster
+    handles: ["Naive_CD4", "Naive_CD8"]
+    params:
+      cell_types: ["Naive_CD4", "Naive_CD8"]
+      affinity_threshold: 0.4
+      il12_threshold: 0.1
+      il4_threshold: 0.1
+      scan_radius: 1
+

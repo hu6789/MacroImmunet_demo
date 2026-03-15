@@ -1,0 +1,52 @@
+id: Naive_CD4_v1
+type: cell
+display_name: "Naive CD4 T cell"
+version: 1
+states:
+  - Naive
+  - Primed
+  - Effector_Th1
+  - Effector_Th2
+  - Memory_CD4_Early
+  - Memory_CD4_Late
+  - Dead
+
+receptors:
+  - ref: TCR_v1
+    instance_params:
+      tcr_density: 1000
+      repertoire_size: 20
+  - ref: IL12R_v1
+    instance_params: { count: 120 }
+  - ref: IL2R_v1
+    instance_params: { count: 200 }
+  - ref: CD28_v1
+    instance_params: { count: 200 }
+  - ref: CCR7_v1
+    instance_params: { count: 30 }
+
+behaviors:
+  - id: random_walk_v1
+  - id: TCR_scan_v1
+  - id: IL12_driven_diff_v1
+  - id: IL4_drive_v1
+  - id: IL2_proliferation_v1
+  - id: proliferate_v1
+  - id: differentiate_v1
+  - id: become_memory_v1
+
+default_params:
+  proliferation_delay_ticks: 24
+  activation_thresh: 0.3
+  division_limit: 10
+  default_clone_size: 1
+  memory_prob_per_division: 0.05
+  costim_sensitivity: 0.5
+
+metadata:
+  lineage_template_ref: "specs/T_cell_lineage.yaml::CD4"
+  lineage_tracking: true
+
+notes:
+  - "TCR_scan_v1 must fill affinity in evaluation context used by lineage rules."
+

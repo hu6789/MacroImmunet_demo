@@ -1,0 +1,19 @@
+id: IL4
+display_name: "Interleukin-4 (IL-4)"
+category: cytokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - "Effector_Th2_v1"
+typical_consumers:
+  - "Naive_CD4_v1"
+half_life_ticks: 180
+recommended_field: "Field_IL4"
+optional: true
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Promotes Th2 differentiation; optional for demo unless Th2 branch is used."
+version: 1
+

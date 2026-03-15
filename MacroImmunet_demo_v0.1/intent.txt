@@ -1,0 +1,17 @@
+intent = {
+
+    # 执行层
+    "type": str,
+    "source": str,
+    "target": str | None,
+    "payload": dict,
+
+    # 调试层
+    "meta": {
+        "cell_id": str,
+        "cell_master": str,
+        "decision_engine": str,
+        "tick": int
+    }
+
+}

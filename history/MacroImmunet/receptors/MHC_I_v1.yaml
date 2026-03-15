@@ -1,0 +1,23 @@
+id: MHC_I_v1
+type: presentation_molecule
+display_name: "MHC Class I (abstract)"
+description: "MHC I used to present peptides (8-11mer) to CD8 (TCR)."
+properties:
+  mhc_class: I
+  preferred_lengths: [8,9,10,11]
+  default_stability_half_life_ticks: 120
+  max_peptide_slots: 6
+  cross_presentation: true
+  presentation_mode: "endogenous_or_cross"
+binding_hints:
+  anchor_positions_by_length:
+    9: [2,9]
+  default_affinity_model: "from_epitope_preference_or_sequence"
+notes:
+  - "present_v1 should create pMHC entries: { peptide_id, seq, affinity, mhc_type: MHC_I, presenter_id, co_stim, until }"
+  - "TCR_scan_v1 reads MHC_I entries for CD8 scanning."
+optional: false
+provenance:
+  created: 2025-11-05
+version: 1
+

@@ -1,0 +1,21 @@
+id: IL12
+display_name: "Interleukin-12 (IL-12)"
+category: cytokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - "DendriticCell_v1"
+  - "Macrophage_v1"
+typical_consumers:
+  - "Naive_CD4_v1"
+  - "Naive_CD8_v1"
+half_life_ticks: 240
+recommended_field: "Field_IL12"
+optional: false
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Key Th1-polarizing cytokine. Produced by activated DC/macrophages; promotes STAT4/T-bet axis."
+version: 1
+

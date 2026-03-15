@@ -1,0 +1,87 @@
+# path: agents/Antigen_SARS_like_001.yaml
+id: Antigen_SARS_like_001
+type: virus_abstract
+meta:
+  common_name: "SARS_like_spike_toy_v1"
+  created: 2025-11-03
+  note: "Fictional toy sequence for simulation/demo only."
+
+sequence: "MKTIIALSYIFCLVFADYKDDDDKPLKQNTLQKYGKGGVGVVQPGGSGGKT"
+
+epitope_list:
+  - id: S_toy_I_A
+    seq: "KQNTLQKYG"
+    length: 9
+    mhc_preference:
+      MHC_I: 0.72
+      MHC_II: 0.12
+    presentation_penalty: 0.0
+
+  - id: S_toy_I_B
+    seq: "GGVGVVQPG"
+    length: 9
+    mhc_preference:
+      MHC_I: 0.48
+      MHC_II: 0.10
+    presentation_penalty: 0.4
+
+  - id: S_toy_II_A
+    seq: "ALSYIFCLVFADYKD"
+    length: 15
+    mhc_preference:
+      MHC_I: 0.10
+      MHC_II: 0.65
+    presentation_penalty: 0.0
+
+  - id: S_toy_II_B
+    seq: "PLKQNTLQKYGKGGV"
+    length: 15
+    mhc_preference:
+      MHC_I: 0.20
+      MHC_II: 0.40
+    presentation_penalty: 0.25
+
+ace2_binding:
+  affinity_score: 0.75
+  receptor_preference: "ACE2_v1"
+  tropism_bias:
+    lung_epithelium: 0.9
+    nasal_epithelium: 0.8
+    blood: 0.05
+
+entry_modifiers:
+  early_evasion_factor: 0.7
+  protease_activation_required: true
+  protease_activity_factor: 0.9
+
+replicating: true
+replication_parameters:
+  replication_rate_fold_per_tick: 1.15
+  burst_yield_units: 50
+  lysis_after_ticks: 10
+  infectivity_prob_per_contact: 0.005
+  initial_load: 0.2
+
+field_properties:
+  decay_half_life_ticks: 24
+  particle_mode: false
+  spillover_to_blood_prob: 0.005
+
+immune_evasion:
+  early_innate_suppression_ticks: 6
+  presentation_penalty_global: 0.0
+
+provenance:
+  author: your_name
+  version: 1
+
+loader_hints:
+  require_epitope_list: true
+  if_epitope_list_absent: "auto_sliding_kmers"
+  recommended_mhc_lengths:
+    MHC_I: 9
+    MHC_II: 15
+
+notes:
+  - "Tune infectivity & protease_activity_factor to model TMPRSS2-like dependence."
+

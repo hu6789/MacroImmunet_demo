@@ -1,0 +1,14 @@
+id: Field_Perforin
+display_name: "Perforin field"
+substance_ref: "../substances/Perforin.yaml"
+type: effector
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.02
+decay_half_life_ticks: 10
+grid_scope: "local"
+optional: true
+notes:
+  - "Optional heavy-weight field for CTL effector action. Can be disabled for lightweight simulations."
+version: 1
+

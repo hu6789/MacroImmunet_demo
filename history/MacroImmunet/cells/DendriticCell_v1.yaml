@@ -1,0 +1,70 @@
+# cells/DendriticCell_v1.yaml
+type: DendriticCell
+version: v1
+description: |
+  Demo dendritic cell: patrols, phagocytoses antigen, processes them into pMHC,
+  upregulates co-stimulation, and migrates directionally toward lymph node
+  chemokine (e.g., CCL19).
+
+states:
+  - Immature
+  - Mature
+  - Migrating
+  - Dead
+
+links:
+  receptors:
+    - CCR7_v1            # chemotactic receptor for LN-homing (CCL19/21)
+    - MHC_II_v1          # presenting processed pMHC
+    - AntigenPatternR_v1 # PAMP/antigen-pattern recognition
+
+  fields:
+    - Field_CCL19
+    - Field_Antigen_Density
+    - Field_Cell_Debris
+
+  agents:
+    - Antigen_SARS_like_001
+
+behaviors:
+  # 1. 基础巡逻行为（不需要输入 field）
+  - random_walk_v1.yaml
+
+  # 2. 吞噬抗原或碎片（从 Field_Antigen_Density 或 Field_Cell_Debris）
+  - phagocytose_v1.yaml
+
+  # 3. 将吞噬的抗原加工并加载到 MHC-II（产生 pMHC_presented 事件）
+  - DC_process_and_load_MHC_v1.yaml
+
+  # 4. 上调共刺激信号 co-stim（决定是否能被 Th 激活）
+  - DC_upregulate_costim_v1.yaml
+
+  # 5. 向 LN 方向移动（依赖 CCR7 + CCL19 梯度）
+  - move_toward_field_v1.yaml
+
+params:
+  # how many particles per tick can be phagocytosed
+  phagocytose_capacity: 3
+
+  # each processing step can convert some antigen into pMHC
+  processing_rate: 2
+
+  # amount added to co_stim each activation cycle
+  costim_increase: 0.5
+
+  # threshold above which DC becomes "Mature"
+  maturation_threshold: 1.0
+
+  # CCL19-directed migration speed
+  migrate_speed: 1.2
+
+  # distance / gradient threshold that triggers migration-to-LN
+  migrate_trigger_gradient: 0.3
+
+meta:
+  captured_antigens: []   # raw antigens/debris the DC ingested
+  present_list: []        # pMHC complexes to show to Th
+  co_stim: 0.0            # measure of activation/maturation
+  maturation_state: Immature
+  state: Immature
+

@@ -1,0 +1,14 @@
+id: Field_CCL2
+display_name: "CCL2 (MCP-1) chemokine field"
+substance_ref: "../substances/CCL2.yaml"
+type: chemokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.06
+decay_half_life_ticks: 180
+grid_scope: "local"
+optional: true
+notes:
+  - "Monocyte chemoattractant (CCL2/MCP-1). Used by CCR2-expressing cells for chemotaxis."
+version: 1
+

@@ -1,0 +1,7 @@
+{
+  "node_id": "MAPK",
+  "node_type": "signal",
+  "inputs": ["RAS"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {"w0": 1.3}
+}

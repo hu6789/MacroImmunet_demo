@@ -1,0 +1,7 @@
+{
+  "node_id": "Ca_signal",
+  "node_type": "signal",
+  "inputs": ["PLCg"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {"w0": 2.0}
+}

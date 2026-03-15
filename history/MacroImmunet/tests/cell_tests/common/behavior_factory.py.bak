@@ -1,0 +1,167 @@
+# tests/cell_tests/common/behavior_factory.py
+"""
+Robust behavior factory:
+ - Prefer YAML's 'implementation' block (module + function/class)
+ - Fallback to legacy 'behaviors.<stem>' import for compatibility
+ - If implementation.function is a plain function, wrap it into an adapter
+   that provides execute/act/run methods.
+"""
+import importlib
+from pathlib import Path
+from types import ModuleType
+from typing import Any
+
+def _import_module(mod_name: str) -> ModuleType:
+    try:
+        return importlib.import_module(mod_name)
+    except Exception as e:
+        raise
+
+
+class FunctionBehaviorAdapter:
+    """
+    Adapter that wraps a plain function implementing a behavior.
+    The wrapped function may accept many different calling conventions:
+      - func(cell, env, params, payload=..., rng=..., receptors=..., **kw)
+      - func(cell, env, params, payload)
+      - func(cell, env, params)
+      - func(cell, env)
+      - func(cell, env, **kw)
+      - func(cell, env, payload=..., params=...)
+    This adapter will try a sequence of likely call patterns and return the first
+    successful result. It always returns a list (or empty list on failure).
+    """
+    def __init__(self, func, params=None):
+        self.func = func
+        self.params = params or {}
+
+    def _safe_call(self, fn, *a, **kw):
+        try:
+            return fn(*a, **kw)
+        except TypeError:
+            # signature mismatch; bubble up for caller to try other forms
+            raise
+        except Exception:
+            # if underlying function raises for other reasons, capture and return empty
+            return []
+
+    def execute(self, cell=None, env=None, params=None, payload=None, rng=None, receptors=None, **kw):
+        # Build call-time args
+        p = {}
+        p.update(self.params or {})
+        if isinstance(params, dict):
+            p.update(params)
+        # ensure payload/rng/receptors present in kw for some call conventions
+        call_kw = dict(kw or {})
+        if payload is not None:
+            call_kw['payload'] = payload
+        if rng is not None:
+            call_kw['rng'] = rng
+        if receptors is not None:
+            call_kw['receptors'] = receptors
+        # Try plausible calling conventions in order (most explicit first)
+        fn = self.func
+        tries = [
+            # full explicit
+            ("cell_env_params_payload_rng_receptors_kw", (cell, env, p), dict(call_kw)),
+            # explicit named
+            ("named_args", (), dict(cell=cell, env=env, params=p, payload=payload, rng=rng, receptors=receptors, **call_kw)),
+            # positional: cell, env, params, payload
+            ("pos_params_payload", (cell, env, p, payload), dict()),
+            # positional: cell, env, params
+            ("pos_params", (cell, env, p), dict()),
+            # minimal positional
+            ("pos_min", (cell, env), dict(payload=payload, rng=rng, receptors=receptors, **call_kw)),
+            # only keyword passthrough
+            ("kw_only", (), dict(cell=cell, env=env, **call_kw)),
+        ]
+        for name, args, k in tries:
+            try:
+                res = fn(*args, **k)
+                # normalize result to list-like
+                if res is None:
+                    return []
+                if isinstance(res, (list, tuple)):
+                    return res
+                # allow single-action dict -> wrap
+                if isinstance(res, dict):
+                    return [res]
+                # else return empty list to be safe
+                return []
+            except TypeError:
+                # try next signature
+                continue
+            except Exception:
+                # underlying function raised — return empty, don't crash tests
+                return []
+        # Nothing worked
+        return []
+
+def instantiate_behavior_from_yaml(rel_path: str, yaml_cfg: Any):
+    """
+    Instantiate a behavior object given a repo-relative yaml path and its parsed cfg.
+    Expects yaml_cfg to be a dict possibly containing 'implementation' block like:
+      implementation:
+        module: "behaviors_impl.phagocytose"
+        function: "phagocytose_v1"
+        class: "PhagocytoseBehavior"   # optional alternative
+    Returns an object with execute/act/run methods (or raises on import errors).
+    """
+    # Check implementation block first
+    impl = None
+    if isinstance(yaml_cfg, dict):
+        impl = yaml_cfg.get("implementation") or yaml_cfg.get("impl")
+
+    # Helper to instantiate from a module/class name
+    def _instantiate_from_module_class(module_name, class_name=None, func_name=None, params=None):
+        mod = _import_module(module_name)
+        if class_name:
+            cls = getattr(mod, class_name, None)
+            if cls is None:
+                raise RuntimeError(f"Class {class_name} not found in {module_name}")
+            # Pass params if supported, else no-arg
+            try:
+                return cls(**(params or {}))
+            except TypeError:
+                return cls()
+        if func_name:
+            func = getattr(mod, func_name, None)
+            if func is None:
+                raise RuntimeError(f"Function {func_name} not found in {module_name}")
+            return FunctionBehaviorAdapter(func, params=params)
+        # if neither provided, attempt to find Behavior class in module
+        if hasattr(mod, "Behavior"):
+            cls = getattr(mod, "Behavior")
+            try:
+                return cls(**(params or {}))
+            except TypeError:
+                return cls()
+        # fallback: search for first class ending with 'Behavior'
+        for obj in mod.__dict__.values():
+            if isinstance(obj, type) and obj.__name__.endswith("Behavior"):
+                try:
+                    return obj(**(params or {}))
+                except TypeError:
+                    return obj()
+        raise RuntimeError(f"No suitable behavior found in module {module_name}")
+
+    # 1) If implementation block provides module+function/class -> use it
+    if impl and isinstance(impl, dict):
+        module_name = impl.get("module")
+        func_name = impl.get("function")
+        class_name = impl.get("class")
+        # allow params to come from yaml 'params'
+        params = (yaml_cfg.get("params") if isinstance(yaml_cfg, dict) else None) or {}
+        if module_name:
+            return _instantiate_from_module_class(module_name, class_name=class_name, func_name=func_name, params=params)
+
+    # 2) Fallback: try legacy mapping: behaviors.<stem>
+    stem = Path(rel_path).stem
+    legacy_module = f"behaviors.{stem}"
+    try:
+        return _instantiate_from_module_class(legacy_module, params=(yaml_cfg.get("params") if isinstance(yaml_cfg, dict) else {}))
+    except Exception as e:
+        # Re-raise with helpful message
+        raise RuntimeError(f"Failed to instantiate behavior for {rel_path}. Looked for implementation block and legacy module {legacy_module}. Original error: {e}")
+
+

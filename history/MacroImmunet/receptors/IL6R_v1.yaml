@@ -1,0 +1,32 @@
+id: IL6R_v1
+type: receptor
+display_name: "IL-6 Receptor"
+ligand_field: "Field_IL6"
+description: "IL-6 receptor used by generic inflammatory aggregation and specific IL-6 response programs."
+
+default_params:
+  count: 80
+  # units: k_on [1/(au·tick)], k_off [1/tick]
+  k_on: 0.005
+  k_off: 0.02
+  activation_threshold_nbound: 2
+  activation_threshold_integral: 20
+  integration_window_ticks: 48
+  refractory_ticks: 6
+
+downstream:
+  on_activation:
+    - behavior: "up_down_regulate_v1"
+      payload:
+        target: "inflammatory_program"
+        fold_change: 1.2
+        duration_ticks: 48
+
+notes:
+  - "Conservative defaults: IL-6 often accumulates before strong effects; tune to your scenario."
+  - "Units: k_on in 1/(au·tick), k_off in 1/tick; count is receptor copies (dimensionless)."
+optional: false
+provenance:
+  created: 2025-11-11
+version: 1
+

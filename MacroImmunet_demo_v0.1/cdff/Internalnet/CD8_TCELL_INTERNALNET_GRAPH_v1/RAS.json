@@ -1,0 +1,7 @@
+{
+  "node_id": "RAS",
+  "node_type": "signal",
+  "inputs": ["LAT"],
+  "update_rule": "weighted_sum_sigmoid",
+  "params": {"w0": 1.2}
+}

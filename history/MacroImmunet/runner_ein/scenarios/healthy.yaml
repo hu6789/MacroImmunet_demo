@@ -1,0 +1,51 @@
+# Minimal / healthy scenario - tiny antigen seeds, little replication/influx
+random_seed: 42
+
+space:
+  w: 12
+  h: 6
+  space_id: Lung_Tissue_2D
+  seed:
+    # nothing seeded here - AntigenMaster will seed tiny background if configured
+    []
+
+masters:
+  # enable antigen master with very low seeding/influx
+  antigen_master:
+    seeds:
+      - { tick: 0, coord: [3, 2], amount: 0.2 }
+      - { tick: 0, coord: [9, 1], amount: 0.1 }
+    continuous_influx_rate: 0.0
+    replication_rate: 0.01
+    diffusion_rate: 0.12
+    decay: 0.995
+    attempt_infect_threshold: 0.5
+    attempt_infect_strength_scale: 0.5
+    replication_cap: 50.0
+    max_attempts_per_tick: 6
+
+  epithelial: true
+  epithelial_params:
+    scan_threshold: 0.3
+    max_hotspots: 2
+    infection_intent_strength: 0.05
+
+  dc: true
+  dc_params:
+    antigen_threshold: 0.25
+    debris_threshold: 0.2
+    il12_deposit_per_hotspot: 1.5
+    deposit_cap: 6.0
+    recruit_prob_per_hotspot: 0.5
+    norm_score: 10.0
+    max_hotspots: 3
+
+  naive_tcell: true
+  naive_tcell_params:
+    cell_types: ["Naive_CD4"]
+    affinity_threshold: 0.3
+    percell_precedence: true
+    percell:
+      Th2:
+        decision_latency_ticks: 2
+

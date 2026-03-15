@@ -1,0 +1,35 @@
+# Minimal Memory CD8 demo cell used in unit tests / demos
+id: Memory_CD8_v1
+display_name: "Memory CD8 (Memory8)"
+description: |
+  Minimal memory CD8 T cell for demo/tests.
+  - long-lived effector-memory like behavior
+  - can rapidly re-activate into cytotoxic program in tests
+meta_defaults:
+  lifespan: 1000000
+  state: "Resting"
+  proliferation_capacity: 0.05
+receptors:
+  - TCR_v1
+  - CCR7_v1
+  - CD28_v1
+behaviors:
+  - behavior: survival_signal_v1.yaml
+    params:
+      base_survival_rate: 0.995
+  - behavior: proliferate_v1.yaml
+    params:
+      proliferate_probability: 0.03
+      max_divisions: 1
+  - behavior: TCR_scan_v1.yaml
+    params:
+      scan_radius: 1
+      detection_threshold: 0.5
+  # placeholder for rapid effector program trigger (unit tests can swap in perforin behavior)
+  - behavior: up_down_regulate_v1.yaml
+    params:
+      # this keeps a flag that test scaffolds can toggle to simulate re-activation
+      attribute: "effector_ready"
+      up_value: true
+      down_value: false
+

@@ -1,0 +1,77 @@
+# environment/layout.yaml
+environment_layout:
+  meta:
+    name: MacroImmunet_demo_env_layout_v0.1
+    created: 2025-11-09
+    author: your_name
+    description: "Assembles individual spaces into a unified environment, defines positions & inter-space links."
+
+  global_scale:
+    unit: "arbitrary_units"
+    scale_x: 1.0
+    scale_y: 1.0
+
+  placements:
+    - space_id: Respiratory_Entrance
+      position: [10, 45]
+      orientation: north
+      map_to: Lung_Tissue_2D
+      mapping_hint:
+        target_border: top
+        connector_port: respiratory_port_1
+
+    - space_id: Lung_Tissue_2D
+      position: [10, 10]
+      orientation: none
+
+    - space_id: Lymphatic_Vessel
+      position: [40, 20]
+      orientation: east
+
+    - space_id: Blood_Vessel
+      position: [10, -10]
+      orientation: south
+
+    - space_id: Draining_LN
+      position: [45, 15]
+      orientation: none
+
+  links:
+    # Respiratory Entrance -> Lung: aerosol deposition mapping
+    - from: Respiratory_Entrance
+      to: Lung_Tissue_2D
+      via: aerosol_deposition
+      allowed_types: ["Antigen_SARS_like_001"]
+      mapping: border_top
+      probability_per_event: 1.0
+      transfer_delay_ticks: 0
+      notes: "Seeded aerosols from Respiratory_Entrance should map into Lung_Tissue_2D immediately in demo."
+
+    # Lung -> Lymphatic vessel (APC migration)
+    - from: Lung_Tissue_2D
+      to: Lymphatic_Vessel
+      via: interstitial_to_lymph
+      allowed_types: [DendriticCell_v1, Macrophage_v1]
+      probability_per_tick: 0.02
+      transfer_delay_ticks: 12
+
+    # Lung -> Blood (spillover of antigen particles)
+    - from: Lung_Tissue_2D
+      to: Blood_Vessel
+      via: spillover
+      allowed_types: ["Antigen_SARS_like_001"]
+      probability_per_tick: 0.001
+      transfer_delay_ticks: 3
+
+    # Lymphatic vessel -> Draining LN
+    - from: Lymphatic_Vessel
+      to: Draining_LN
+      via: lymph_flow
+      allowed_types: [DendriticCell_v1]
+      probability_per_tick: 0.9
+      transfer_delay_ticks: 6
+
+  mapping_notes:
+    - "Positions are for visualization / layout only. They do not change grid coordinates inside the sub-spaces."
+    - "Loader should instantiate each space independently and then create transport policies according to links."
+

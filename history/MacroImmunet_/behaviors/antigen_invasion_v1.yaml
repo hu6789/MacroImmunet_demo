@@ -1,0 +1,50 @@
+id: antigen_invasion_v1
+name: "Antigen Invasion / ACE2 Entry (v1)"
+type: behavior
+meta:
+  description: "ACE2-mediated antigen entry/infection for susceptible epithelial cells. Supports field or particle modes."
+  version: "1.0"
+  created: 2025-11-05
+
+params:
+  base_entry_scaler: 1.0
+  min_binding_for_entry: 0.02
+  protease_required_penalty: 0.5
+  default_infectivity_scale: 1.0
+  consumption_on_infection_units: 1.0
+  max_infect_per_tick_per_cell: 1
+  # engine will enforce per-cell infection count if true
+  enforce_max_infect_per_tick_per_cell: true
+
+# Expected runtime inputs: payload with keys binding_score, antigen, initial_viral_load
+# or the behavior implementation will sample env.sample_local_antigen(cell.coord)
+
+trigger:
+  type: "on_receptor_activation"
+  receptor_id: "ACE2_v1"
+  # condition omitted (fires when receptor activates); engines may allow condition expressions
+
+# Delegate main logic to an implementation module for safety/maintainability
+implementation:
+  module: "behaviors_impl.antigen_invasion"
+  function: "attempt_entry"
+  args:
+    params_ref: params
+    receptor_id: "ACE2_v1"
+    target_field: "Field_Antigen_Density"
+  # The implementation should:
+  # - resolve antigen (payload or env.sample_local_antigen)
+  # - compute binding_score (payload or antigen.ace2_binding.affinity_score * receptor.default_params.receptor_entry_modifier)
+  # - enforce min_binding_for_entry
+  # - compute protease_factor and protease_penalty when required
+  # - compute p_infect and clip to [0,1]
+  # - enforce max_infect_per_tick_per_cell if enforce_max_infect_per_tick_per_cell true
+  # - consume env units via env.consume_local_antigen(cell.coord, consumption_on_infection_units) and log failures
+  # - set cell.state, cell.viral_load, cell.infection_timer, append to cell.captured_antigens safely
+  # - emit an 'infected' event and log event as JSON-like object: {"cell_id": cell.id, "antigen_id": antigen.id, "p": p_infect}
+
+notes:
+  - "Complex numeric logic should be implemented in the referenced implementation module to avoid engine-dependent expression parsing."
+  - "Engine must ensure thread-safety when updating cell state and consuming field mass (use atomic ops or locks)."
+  - "Do not silently swallow exceptions from env.consume_local_antigen; log them for debugging."
+

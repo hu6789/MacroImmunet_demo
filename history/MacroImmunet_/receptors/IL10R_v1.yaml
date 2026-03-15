@@ -1,0 +1,24 @@
+id: IL10R_v1
+type: receptor
+display_name: "IL-10 Receptor (tuned)"
+ligand_field: "Field_IL10"
+description: "Tuned IL-10 receptor (conservative defaults). Units: k_on [1/(au·tick)], k_off [1/tick]."
+
+default_params:
+  count: 40
+  k_on: 0.0015
+  k_off: 0.02
+  activation_threshold_integral: 30
+  integration_window_ticks: 48
+  refractory_ticks: 6
+downstream:
+  on_activation:
+    - behavior: "up_down_regulate_v1"
+      payload:
+        target: "inflammatory_program"
+        fold_change: 0.5
+        duration_ticks: 72
+notes:
+  - "Tuned conservative defaults to model delayed anti-inflammatory feedback."
+version: 1
+

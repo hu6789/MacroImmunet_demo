@@ -1,0 +1,18 @@
+id: Perforin
+display_name: "Perforin"
+category: effector_protein
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - Effector_CTL_v1
+typical_consumers: []
+half_life_ticks: 10
+recommended_field: Field_Perforin
+optional: true
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Released by CTLs; with granzyme can induce target lysis. Use field-mode for spatial effector effects or turn off for direct-lysis simplified mode."
+version: 1
+

@@ -1,0 +1,44 @@
+id: perforin_apoptosis_v1
+name: "Perforin/Granzyme CTL Attack (v1)"
+type: behavior
+meta:
+  description: "CTL attack logic - field-based preferred; reduced direct-lysis probability for stability."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - internal: ["cell.current_target", "cell.cooldown_until"]
+  - receptor: "TCR_v1"
+
+params:
+  kill_probability_base: 0.15
+  perforin_units: 6
+  granzyme_units: 3
+  cooldown_ticks: 3
+  prefer_field_mode: true   # if true, try spawn field first when available
+
+trigger:
+  type: "on_intent"  # or 'on_event' when TCR activates
+  intent: "attack_target"
+
+implementation:
+  module: "behaviors_impl.perforin_apoptosis"
+  function: "perforin_apoptosis_v1"
+  args:
+    params_ref: params
+    get_cell_fn: "env.get_cell"
+    has_field_fn: "env.has_field"            # engine API: does environment support field-based attack?
+    spawn_field_fn: "env.add_to_field"       # signature (field_name, coord, amount)
+    emit_intent_fn: "env.emit_intent"
+    log_fn: "env.log_event"
+    rng_inject: true
+
+emits:
+  - intent: "add_to_field"
+    payload_fields: ["field","coord","amount","cell_id","tick"]
+  - intent: "lysis"
+    payload_fields: ["target_id","cause","probability","cell_id","tick"]
+
+notes:
+  - "Implementation must: check cooldown, compute affinity via get_cell_fn(target_id), compute p = min(1.0, kill_probability_base*(0.5+0.5*affinity)), prefer field-based spawn when has_field_fn true, else perform direct lysis attempt using injected RNG and respect cooldown by setting cell.cooldown_until = tick + cooldown_ticks when an attack occurs."
+

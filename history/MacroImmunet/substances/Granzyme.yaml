@@ -1,0 +1,18 @@
+id: Granzyme
+display_name: "Granzyme"
+category: effector_protein
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - Effector_CTL_v1
+typical_consumers: []
+half_life_ticks: 10
+recommended_field: Field_Granzyme
+optional: true
+provenance:
+  author: your_name
+  created: 2025-11-05
+notes:
+  - "Works with perforin to induce apoptosis in target cells; optional field-mode for richer CTL modeling."
+version: 1
+

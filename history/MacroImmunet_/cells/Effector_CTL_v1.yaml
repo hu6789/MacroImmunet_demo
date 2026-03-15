@@ -1,0 +1,30 @@
+id: Effector_CTL_v1
+type: cell
+display_name: "Effector CTL"
+version: 1
+states:
+  - Effector_CTL
+  - Memory_CD8
+  - Dead
+
+receptors:
+  - ref: TCR_v1
+    instance_params: { tcr_density: 800 }
+  - ref: IL2R_v1
+    instance_params: { count: 120 }
+  - ref: CXCR3_v1
+    instance_params: { count: 40 }
+
+behaviors:
+  - id: TCR_scan_v1
+  - id: move_directed_v1
+  - id: proliferate_v1
+  - id: perforin_apoptosis_v1
+  - id: natural_apoptosis_v1
+  - id: become_memory_v1
+
+default_params:
+  migration_speed: 1.0
+  kill_probability_base: 0.3
+  effector_lifespan_ticks: 720
+

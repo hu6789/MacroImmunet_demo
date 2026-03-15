@@ -1,0 +1,42 @@
+id: Macrophage_v1
+type: cell
+display_name: "Macrophage"
+version: 1
+states:
+  - Resting
+  - Activated
+  - Phagocytosing
+  - Dead
+
+volume:
+  cell_volume_units: 1.5
+  radius_grid_units: 0.7
+
+receptors:
+  - ref: TLR_generic_v1
+    instance_params: { count: 40 }
+  - ref: AntigenPatternR_v1
+    instance_params: { count: 80 }
+  - ref: MHC_II_v1
+    instance_params: {}
+  - ref: CCR2_v1
+    instance_params: { count: 30 }
+
+behaviors:
+  - id: random_walk_v1
+  - id: move_directed_v1
+  - id: phagocytose_v1
+  - id: present_v1
+  - id: secrete_v1
+  - id: inflammatory_death_v1
+  - id: natural_apoptosis_v1
+
+default_params:
+  phagocytosis_capacity: 10
+  base_motility_speed: 0.8
+  activation_threshold: 0.3
+  il12_secretion_rate_when_activated: 0.05
+
+diagnostics:
+  log_on_events: [phagocytose, activate, secrete]
+

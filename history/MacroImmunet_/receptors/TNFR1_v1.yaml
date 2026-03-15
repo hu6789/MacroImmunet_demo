@@ -1,0 +1,37 @@
+id: TNFR1_v1
+type: receptor
+display_name: "TNF Receptor 1 (TNFR1)"
+ligand_field: "Field_TNF"
+description: "TNFR1-like receptor that senses TNF-α; drives pro-inflammatory signaling and adhesion/migration programs."
+
+default_params:
+  count: 100
+  # units: k_on [1/(au·tick)], k_off [1/tick]
+  k_on: 0.01
+  k_off: 0.02
+  activation_threshold_nbound: 1
+  activation_threshold_integral: 8
+  integration_window_ticks: 24
+  internalization_on_bind: false
+  refractory_ticks: 6
+
+downstream:
+  on_activation:
+    - behavior: "up_down_regulate_v1"
+      payload:
+        target: "adhesion_molecules"
+        fold_change: 1.2
+        duration_ticks: 48
+    - behavior: "proinflammatory_program_v1"
+      payload:
+        increase_TNF_secretion_by_factor: 0.5
+        duration_ticks: 24
+
+notes:
+  - "TNFR1 is modeled as a primarily pro-inflammatory receptor (drives adhesion and autocrine/paracrine TNF amplification)."
+  - "If you also want an immunoregulatory axis (TNFR2-like), add TNFR2_v1 with different downstream behavior (survival/repair)."
+optional: false
+provenance:
+  created: 2025-11-11
+version: 1
+

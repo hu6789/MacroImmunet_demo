@@ -1,0 +1,75 @@
+# cells/Epithelial_Lung_Cell_v1.yaml
+type: Epithelial_Lung_Cell
+version: v1
+description: |
+  Demo epithelial lung cell. Can be infected by viral antigen, replicate virus,
+  secrete inflammatory signals / DAMP, and release virus on death. Minimal
+  contract for integration tests and demo cycles.
+
+states:
+  - Healthy
+  - Infected
+  - Compromised
+  - Dead
+
+links:
+  receptors:
+    - ACE2_v1             # viral entry receptor (SARS-like)
+    - AntigenPatternR_v1  # PRR for debris / PAMP detection
+    - IFNGR_v1            # respond to IFNg (optional demo)
+
+  fields:
+    - Field_Antigen_Density
+    - Field_Cell_Debris
+    - Field_IFNg
+    - Field_DAMP
+
+  agents:
+    - Antigen_SARS_like_001
+
+behaviors:
+  # 1) exposure / attempt entry of virus (reads fields / spawns meta)
+  - antigen_invasion_v1.yaml
+
+  # 2) internal replication of virus (increments cell.meta.viral_load)
+  - antigen_replication_v1.yaml
+
+  # 3) on death or lysis, release virus to field / spawn particles
+  - antigen_release_v1.yaml
+
+  # 4) produce danger signals / cytokines when infected or stressed
+  - secrete_v1.yaml
+
+  # 5) inflammatory / stress-triggered death (can transition to Dead)
+  - inflammatory_death_v1.yaml
+
+  # 6) baseline natural turnover
+  - natural_apoptosis_v1.yaml
+
+params:
+  # infection/invasion parameters
+  invasion_probability: 1.0
+  default_infectivity_scale: 1.0
+
+  # replication params
+  replication_rate: 1.5       # multiplier per tick
+  replication_emit_event: true
+
+  # release params on death
+  release_probability: 1.0
+  release_burst_yield: 20
+  release_min_internal_load: 1.0
+  release_fraction_of_internal: 0.8
+
+  # secretion params
+  secrete_if_infected: true
+  damps_per_tick: 0.2
+
+meta:
+  state: Healthy
+  viral_load: 0.0        # numeric internal viral load
+  antigen_id: null
+  infected_tick: null
+  last_secrete_tick: null
+  coord: null            # runner usually fills this; kept for tests
+

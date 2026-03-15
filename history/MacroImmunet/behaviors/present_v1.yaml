@@ -1,0 +1,45 @@
+id: present_v1
+name: "Antigen Processing and pMHC Presentation (v1)"
+type: behavior
+meta:
+  description: "Process captured antigens into pMHC entries and append to cell.present_list. Handles MHC I/II, k-mer extraction, per-epitope selection and presentation duration."
+  version: "1.0"
+  created: 2025-11-05
+
+inputs:
+  - internal: ["cell.captured_antigens", "cell.present_list", "cell.co_stim", "cell.processing_efficiency"]
+  - params_doc: "epitope extraction and sampling options"
+
+params:
+  processing_time_ticks: 6
+  presentation_duration_ticks: 240
+  mhc_types: ["MHC_I", "MHC_II"]
+  max_epitopes_per_antigen: 3
+  kmer_k: 9
+  deduplicate_epitopes: true          # whether to avoid duplicate peptide_ids in present_list
+  allow_multiple_mhc_per_epitope: false
+  rng_inject: true
+
+trigger:
+  type: "on_intent"     # or 'time' depending on engine design
+  intent: "process_captured_antigens"
+
+implementation:
+  module: "behaviors_impl.present"
+  function: "present_v1"
+  args:
+    params_ref: params
+    sliding_kmers_fn: "utils.sliding_kmers"                # (sequence,k) -> list of epitope dicts
+    clip_fn: "utils.clip"
+    rand_fn_inject: true
+    append_present_fn: "cell_api.append_presentation"      # engine/cell API to append atomically
+    emit_event_fn: "env.emit_event"
+    log_fn: "env.log_event"
+
+emits:
+  - event: "pMHC_presented"
+    payload_fields: ["presenter","count","tick"]
+
+notes:
+  - "Implementation must: iterate cell.captured_antigens, extract epitope candidates (k-mers or antigen.epitope_list), limit to max_epitopes_per_antigen, compute per-epitope effective probability effp (using mhc preference, penalty, cell.processing_efficiency), sample with injected RNG, append canonical pMHC records to cell.present_list atomically (avoid races), optionally deduplicate, clear captured_antigens after successful processing, then emit pMHC_presented with presenter id and final count."
+

@@ -1,0 +1,14 @@
+id: Field_IL6
+display_name: "IL-6 field"
+substance_ref: "../substances/IL6.yaml"
+type: cytokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.06
+decay_half_life_ticks: 180
+grid_scope: "local"
+optional: false
+notes:
+  - "IL-6 field used by inflammatory behaviors (inflammatory_death_v1, GenericInflammatoryR_v1)."
+version: 1
+

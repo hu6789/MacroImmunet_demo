@@ -1,0 +1,14 @@
+id: Field_CCL19
+display_name: "CCL19 field"
+substance_ref: "../substances/CCL19.yaml"
+type: chemokine
+units: "au"
+default_initial: 0.0
+diffusion_coefficient: 0.08
+decay_half_life_ticks: 120
+grid_scope: "lymphatic"
+optional: false
+notes:
+  - "Homing cue for CCR7+ cells toward draining LN."
+version: 1
+

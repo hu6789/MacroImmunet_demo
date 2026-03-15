@@ -1,0 +1,20 @@
+id: CCL2
+display_name: "CCL2 / MCP-1"
+category: chemokine
+units: "au"
+default_initial: 0.0
+typical_producers:
+  - Macrophage_v1
+  - DendriticCell_v1
+typical_consumers:
+  - Monocyte_like
+half_life_ticks: 180
+recommended_field: Field_CCL2
+optional: true
+provenance:
+  author: your_name
+  created: 2025-11-13
+notes:
+  - "Demo substance for CCR2 testing."
+version: 1
+

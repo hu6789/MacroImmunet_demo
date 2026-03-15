@@ -1,0 +1,49 @@
+# Low-dose exposure: noticeable hotspots but not runaway
+random_seed: 123
+
+space:
+  w: 12
+  h: 6
+  space_id: Lung_Tissue_2D
+  seed:
+    - { field: Field_Antigen_Density, coord: [3, 2], value: 2.0 }
+    - { field: Field_Cell_Debris, coord: [2, 4], value: 1.0 }
+
+masters:
+  antigen_master:
+    seeds:
+      - { tick: 0, coord: [3,2], amount: 2.0 }
+    continuous_influx_rate: 0.05
+    replication_rate: 0.03
+    diffusion_rate: 0.18
+    decay: 0.995
+    attempt_infect_threshold: 0.5
+    attempt_infect_strength_scale: 1.0
+    replication_cap: 100.0
+    max_attempts_per_tick: 10
+
+  epithelial: true
+  epithelial_params:
+    scan_threshold: 0.35
+    max_hotspots: 3
+    infection_intent_strength: 0.06
+
+  dc: true
+  dc_params:
+    antigen_threshold: 0.4
+    debris_threshold: 0.15
+    il12_deposit_per_hotspot: 2.0
+    deposit_cap: 8.0
+    recruit_prob_per_hotspot: 0.7
+    norm_score: 12.0
+    max_hotspots: 4
+
+  naive_tcell: true
+  naive_tcell_params:
+    cell_types: ["Naive_CD4", "Naive_CD8"]
+    affinity_threshold: 0.3
+    percell_precedence: true
+    percell:
+      Th2:
+        decision_latency_ticks: 2
+
