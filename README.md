@@ -13,6 +13,7 @@ The goal is not to simulate full biological processes yet, but to confirm that t
 ## Architecture Overview
 
 The demo implements the minimal MacroImmunet runtime pipeline.
+```
 World
 ↓
 ScanMaster
@@ -22,7 +23,7 @@ CellMaster
 IntentBuilder
 ↓
 LabelCenter
-
+```
 Each stage prints trace outputs to allow developers to observe signal propagation and decision formation.
 
 ---
