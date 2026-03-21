@@ -1,0 +1,14 @@
+{
+  "cytokine_secretion": {
+    "selection_mode": "independent"
+  },
+  "stress_response": {
+    "selection_mode": "independent"
+  },
+  "metabolism": {
+    "selection_mode": "independent"
+  },
+  "cell_fate": {
+    "selection_mode": "exclusive"
+  }
+}

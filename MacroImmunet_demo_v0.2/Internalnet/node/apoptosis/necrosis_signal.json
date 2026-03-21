@@ -1,0 +1,18 @@
+{
+  "node_id": "necrosis_signal",
+  "module": "apoptosis",
+  "category": "fate",
+  "node_type": "necrotic_damage",
+  "state_class": "stock",
+
+  "inputs": ["damage"],
+
+  "update_rule": "threshold",
+
+  "params": {
+    "threshold": 1.2
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 12.0
+}

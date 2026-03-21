@@ -1,0 +1,40 @@
+{
+  "behavior_id": "UPR_response",
+
+  "group": "stress_response",
+
+  "gates": [
+    { "node": "stress", "threshold": 0.3 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "stress", "weight": 0.7 },
+      { "node": "translation_capacity", "weight": 0.3 }
+    ]
+  },
+
+  "activation": {
+    "mode": "probabilistic",
+    "threshold": 0.45,
+    "slope": 5.0
+  },
+
+  "cell_influence": {
+    "sensitivity_param": "stress_sensitivity",
+    "capacity_param": "response_capacity"
+  },
+
+  "hir_interaction": {
+    "use_global_scale": true,
+    "use_modifier": true,
+    "blockable": false
+  },
+
+  "output": {
+    "type": "internal",
+    "target": "stress_relief",
+    "intensity_source": "drive"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "node_id": "ROS",
+  "module": "stress",
+  "category": "stress",
+  "node_type": "reactive_species",
+  "state_class": "stock",
+
+  "inputs": ["viral_RNA"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [0.7]
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 10.0
+}

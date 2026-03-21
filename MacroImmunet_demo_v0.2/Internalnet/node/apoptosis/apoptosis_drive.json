@@ -1,0 +1,18 @@
+{
+  "node_id": "apoptosis_drive",
+  "module": "apoptosis",
+  "category": "fate",
+  "node_type": "death_commitment",
+  "state_class": "stock",
+
+  "inputs": ["caspase", "DNA_damage"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [1.0, 0.7]
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 10.0
+}

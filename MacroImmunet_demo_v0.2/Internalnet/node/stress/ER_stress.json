@@ -1,0 +1,18 @@
+{
+  "node_id": "ER_stress",
+  "module": "stress",
+  "category": "stress",
+  "node_type": "organelle_stress",
+  "state_class": "stock",
+
+  "inputs": ["translation_capacity"],
+
+  "update_rule": "inverse_signal",
+
+  "params": {
+    "scale": 1.0
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 10.0
+}

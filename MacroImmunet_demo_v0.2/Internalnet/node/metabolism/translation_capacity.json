@@ -1,0 +1,18 @@
+{
+  "node_id": "translation_capacity",
+  "module": "metabolism",
+  "category": "metabolic",
+  "node_type": "capacity",
+  "state_class": "stock",
+
+  "inputs": ["ATP"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [1.0]
+  },
+
+  "baseline": 0.5,
+  "decay_tau": 6.0
+}

@@ -1,0 +1,18 @@
+{
+  "node_id": "translation_stress",
+  "module": "metabolism",
+  "category": "stress",
+  "node_type": "translation_failure",
+  "state_class": "stock",
+
+  "inputs": ["ATP"],
+
+  "update_rule": "inverse_signal",
+
+  "params": {
+    "scale": 1.0
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 8.0
+}

@@ -1,0 +1,19 @@
+{
+  "node_id": "viral_sensor",
+  "module": "antiviral",
+  "category": "signal",
+  "node_type": "pattern_recognition",
+  "state_class": "transient",
+
+  "inputs": ["viral_RNA"],
+
+  "update_rule": "weighted_power",
+
+  "params": {
+    "weights": [1.2],
+    "exponent": 1.5
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 3.0
+}

@@ -1,0 +1,16 @@
+{
+  "node_id": "ATP",
+  "module": "metabolism",
+  "category": "metabolic",
+  "node_type": "resource",
+  "state_class": "stock",
+
+  "inputs": [],
+
+  "update_rule": "baseline",
+
+  "params": {},
+
+  "baseline": 1.0,
+  "decay_tau": null
+}

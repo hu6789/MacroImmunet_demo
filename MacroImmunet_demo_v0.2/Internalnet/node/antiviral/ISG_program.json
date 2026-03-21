@@ -1,0 +1,18 @@
+{
+  "node_id": "ISG_program",
+  "module": "antiviral",
+  "category": "response",
+  "node_type": "gene_program",
+  "state_class": "stock",
+
+  "inputs": ["STAT1"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [1.0]
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 6.0
+}

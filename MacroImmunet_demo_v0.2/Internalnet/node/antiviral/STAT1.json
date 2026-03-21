@@ -1,0 +1,18 @@
+{
+  "node_id": "STAT1",
+  "module": "antiviral",
+  "category": "signal",
+  "node_type": "transcription_factor",
+  "state_class": "transient",
+
+  "inputs": ["IFN_signal"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [1.2]
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 4.0
+}
