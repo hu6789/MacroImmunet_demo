@@ -1,150 +1,300 @@
-# MacroImmunet Demo v0.2
-
+# MacroImmunet v0.3 — Multi-Cell Simulation Core
 ## Overview
 
-**MacroImmunet v0.2** establishes the core execution pipeline of a multi-cell immune simulation system.
+MacroImmunet v0.3 introduces a multi-cell simulation framework for modeling immune-related cellular behavior in a structured and extensible way.
 
-This version focuses on **architecture validation**, ensuring that the full decision loop—from environmental sensing to world-state updates—is coherent, reproducible, and extensible.
+This version establishes a complete pipeline for:
+ * multi-cell execution
+ * cell-level heterogeneity
+ * internal decision modeling
+ * world interaction via an intent system
 
----
+The system is designed to balance:
+ * biological interpretability
+ * modular extensibility
+ * compute-aware scalability
+## Core Architecture
 
-## Core Pipeline
-
-Each simulation tick follows a strict three-stage pipeline:
-
+The simulation follows a three-stage pipeline:
 ```
-Scan-time → Decision-time → Apply-time
+Scan → Decision → Apply
 ```
+## Scan — Environment Sensing
 
-### 1. Scan-time
+Handled by:
 
-* Environment is summarized (future: via `ScanMaster`)
-* Cells receive contextual input (currently simplified)
+ * ScanMaster
 
-### 2. Decision-time
+Responsibilities:
 
-* `CellMaster` invokes `InternalNet`
-* InternalNet performs:
+ * Read global state (LabelCenter)
+ * Read local spatial signals (Space)
+ * Construct receptor-level node_input
+### Decision — Cell Internal Processing
 
-  * Signal processing
-  * Physiological state update
-  * Behavior generation
-* `HIR (Homeostatic / Integrity Regulator)` filters behaviors based on physiological feasibility
+Handled by:
 
-### 3. Apply-time
+ * InternalNet
 
-* Behaviors are translated into **atomic Intents**
-* All Intents are submitted to `LabelCenter`
-* `LabelCenter.apply()` performs **transactional world updates at tick end**
+ * (HIR embedded internally)
 
----
+Responsibilities:
 
-## Key Components
+ * Process signals via node graph dynamics
+ * Update internal state (node_state)
+ * Produce:
+  ○ behavior candidates
+  ○ fate signals (via HIR)
+### Apply — World Interaction
 
-### CellInstance
+Handled by:
 
-* Lightweight data container
-* Stores:
+ * IntentBuilder
+ * LabelCenter
 
-  * `node_state` (dynamic intracellular state)
-  * `base_values` (cell-specific variability)
-  * metadata (state, age, tags)
+Responsibilities:
 
-### InternalNet
+ * Convert behaviors → intents
+ * Queue updates
+ * Apply all changes atomically per tick
+## Simulation Loop
+```python
+for tick in range(ticks):
 
-* Core intracellular decision engine
-* Produces:
+    for cell in cells:
+        node_input = scan_master.scan(cell)
+        result = internalnet.step(cell, node_input)
 
-  * `behavior_candidates`
-  * updated `node_state`
+        intents = intent_builder.build(cell, result)
+        all_intents.extend(intents)
 
-### HIR (Homeostatic / Integrity Regulator)
+    label_center.enqueue(all_intents)
+    label_center.apply()
 
-* Enforces physiological constraints
-* Filters or modifies behaviors based on:
+    space.diffuse()
+```
+## Cell System — Instance & Heterogeneity
 
-  * stress
-  * damage
-  * metabolic state (e.g., ATP)
+Each cell is an independent entity:
+```python
+cell = Cell(config)
+```
+## Core Components
+node_state → internal dynamic variables
+feature_params → sampled parameters
+capability → functional limits
+meta → runtime state
+## Heterogeneity (v0.3 Highlight)
 
-> ⚠️ In v0.2, HIR acts primarily as a soft regulator. Strict gating will be introduced in future versions.
+Cells of the same type are not identical.
 
-### IntentBuilder
+Parameter sampling:
+```python
+"stress_sensitivity": {
+  "mean": 1.0,
+  "std": 0.2
+}
+```
+Handled by:
+```
+CellFactory → _apply_distribution()
+```
+## Subtypes
 
-* Converts allowed behaviors into atomic **Intents**
-* Handles:
+Discrete variation is supported:
+```python
+"subtypes": {
+  "high_responder": {...},
+  "low_responder": {...}
+}
+```
+## Principle
+```
+Same cell type ≠ identical cells
+```
+## InternalNet — Cell Decision Engine
 
-  * behavior expansion
-  * parameter mapping
-  * ownership consistency
+Pipeline:
+```
+node_input → node graph → HIR → behavior → state update
+```
+### Node System (Dynamics)
+ * defined via JSON (node/defs, graph.json)
+ * iterative update (bounded 0–1)
+ * supports weighted, threshold, inverse rules
+ * includes temporal smoothing (decay_tau)
+### Input Integration
 
+External signals are injected into node state:
+```
+node_state[k] = 0.9 * prev + v / (1 + v)
+```
+Supports nonlinear gating (e.g. IFN thresholding)
+
+### HIR — Constraint & Fate Layer
+
+HIR evaluates physiological feasibility.
+
+Outputs:
+```json
+{
+  "fate": "normal | stressed | dying",
+  "scores": {...},
+  "group_modifiers": {...},
+  "blocks": {...}
+}
+```
+Roles:
+
+ * fate determination
+ * constraint enforcement
+ * behavior modulation
+### Behavior System
+
+Defined via JSON:
+
+ * gate → drive → activation → output
+
+Supports:
+
+ * deterministic / probabilistic activation
+ * HIR modulation
+ * group-based scaling
+### State Update
+
+Behavior feeds back into internal state:
+```json
+"state_effects": {
+  "ATP": -0.08,
+  "stress": 0.05
+}
+```
+## HIR — Homeostatic / Integrity Regulator
+
+HIR is an embedded constraint system within InternalNet.
+
+### Functional Roles
+ * Fate Determination
+continuous scoring → discrete state
+ * Constraint Enforcement
+block incompatible behaviors
+suppress outputs under stress
+ * Behavior Modulation
+continuous scaling via group_modifiers
+### Key Principle
+```
+HIR does not generate behavior — it only constrains it
+```
+### Important Property
+```
+HIR rules are global and consistent across cells
+but outcomes depend on each cell's internal state
+```
+## Intent System — World Interaction Layer
+
+Cells do not modify the world directly.
+
+All interactions are expressed as:
+```
+Cell → Intent → LabelCenter.apply()
+```
+### Intent Pipeline
+```
+behavior → spec → filtered → bound → intent
+```
+### Stages
+behavior → spec (semantic)
+fate filter
+binding (cell-specific parameters)
+execution intent
+### Special Rule
+```python
+if fate == "dying":
+    return [{"type": "die"}]
+```
+### Design Principles
+ * separation of semantics and execution
+ * late binding of parameters
+ * deterministic + batch execution
+## World System — Environment & Spatial Interaction
+
+Architecture:
+```
+LabelCenter → Space → ScanMaster
+```
 ### LabelCenter (SSOT)
-
-* Single Source of Truth for world state
-* Handles:
-
-  * field updates (e.g., IFN)
-  * state transitions
-* All updates are:
-
-  * queued
-  * applied atomically at tick end
-
----
-
-## Running the Demo
-
-```bash
-python3 -m cdff.run.run_v0_2_demo
+ * global state manager
+ * intent queue + atomic apply
+ * decay and saturation handling
+### Space
+ * spatial grid (x, y)
+ * local field storage
+ * cell positioning
+ * diffusion (basic / evolving)
+### ScanMaster
+builds node_input
+merges global + local signals
+### World Flow
 ```
-
-### Demo Includes
-
-* Multiple cell instances
-* InternalNet execution per cell
-* Behavior → Intent conversion
-* Field accumulation (e.g., IFN secretion)
-* Transactional application via LabelCenter
-
----
-
-## Example Output (Simplified)
-
+Intent → LabelCenter → Space → ScanMaster → Cell
 ```
-[CellMaster] Running InternalNet for cell_0
-→ behaviors: autophagy, necrosis, secrete_IFN
-→ intents: state_update, fate, secretion
-
-[LabelCenter] Applying intents...
-
-[Field]
-IFN: increasing over time
+### Key Design
 ```
+Transactional world update (end-of-tick apply)
+```
+## Design Principles
+1. Separation of Concerns
+Scan ≠ Decision ≠ Apply
+2. Intent-based Interaction
+```
+Cell → Intent → World
+```
+3. Deterministic Core + Variability
+deterministic logic
+stochastic parameter sampling
+4. No Global Brain
+per-cell decision
+scalable architecture
+## Current Capabilities
+ * multi-cell simulation
+ * cytokine secretion (IFN, IL6, TNF)
+ * stress / damage modeling
+ * heterogeneous cell population
+ * spatial signal awareness
+## Current Limitations
+ * diffusion model is simplified
+ * limited fate diversity
+ * no event-driven optimization yet
+ * no cell movement / interaction
+## Example Run
+```bath
+python3 -m multi_cell_run_loop
+```
+## Project Structure
+```
+Internalnet/
+intent/
+world/
+multi_cell_run_loop.py
+```
+## Summary
 
----
+MacroImmunet v0.3 establishes a complete multi-cell simulation core with:
 
-## ⚠️ Current Limitations (v0.2 Scope)
+ * modular architecture
+ * heterogeneous cell population
+ * internal decision system
+ * transactional world interaction
+```
+This version marks the transition from a single-cell model
+to a scalable multi-cell simulation framework.
+```
+## AI Assistance
 
-This version prioritizes **pipeline correctness over biological realism**.
+This project was developed with the assistance of AI tools (ChatGPT) for:
 
-### Not yet implemented:
+ * code structuring
+ * documentation drafting
+ * architectural discussions
 
-* ❌ Substance lifecycle (decay / diffusion / half-life)
-* ❌ Temporal dynamics (state accumulation / decay across ticks)
-* ❌ Strict physiological gating (e.g., ATP-constrained behavior blocking)
-* ❌ Effective use of cell-specific variability (`base_values`)
-* ❌ Multi-cell-type specialization
-* ❌ Spatial modeling (2D environment, ScanMaster)
-
----
-
-## 🧾 Notes
-
-MacroImmunet is designed as a **modular, extensible simulation framework**, where:
-
-* Decision logic is **cell-intrinsic**
-* World state is **centrally managed**
-* All interactions occur via **Intents**
-
-
-
+All core design decisions, biological modeling logic, and system architecture were defined and validated by the author.
