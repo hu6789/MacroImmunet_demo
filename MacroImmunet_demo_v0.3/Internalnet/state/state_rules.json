@@ -1,0 +1,21 @@
+[
+  {
+    "behavior_id": "secrete_IFN",
+    "effects": [
+      { "target": "ATP", "op": "add", "value": -0.02 },
+      { "target": "stress", "op": "add", "value": 0.01 }
+    ]
+  },
+  {
+    "behavior_id": "secrete_TNF",
+    "effects": [
+      { "target": "ATP", "op": "add", "value": -0.015 }
+    ]
+  },
+  {
+    "behavior_id": "antioxidant_response",
+    "effects": [
+      { "target": "ROS", "op": "add", "value": -0.05 }
+    ]
+  }
+]

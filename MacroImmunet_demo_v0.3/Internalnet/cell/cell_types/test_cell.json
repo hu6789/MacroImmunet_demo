@@ -1,0 +1,62 @@
+{
+  "cell_type": "test_cell",
+
+  "init_node_state": {
+    "STAT1": 0.0,
+    "IRF3": 0.0,
+    "NFkB": 0.0,
+    "viral_sensor": 0.0,
+    "stress": 0.1,
+    "damage": 0.1,
+    "ATP": 0.3
+  },
+
+  "capability": {
+    "secretion_capacity": 1.0
+  },
+
+  "feature_params": {
+
+    "energy_from_ATP": {
+      "mean": 1.0,
+      "std": 0.1
+    },
+
+    "stress_sensitivity": {
+      "mean": 1.0,
+      "std": 0.2
+    },
+
+    "damage_sensitivity": {
+      "mean": 1.0,
+      "std": 0.15
+    },
+
+    "viral_sensitivity": {
+      "mean": 1.0,
+      "std": 0.3
+    },
+
+    "max_energy": 1.0,
+    "max_stress": 1.0,
+    "max_damage": 1.0
+  },
+  "IFN_response_threshold": {
+    "mean": 1.0,
+    "std": 0.4
+  },
+  "subtypes": {
+    "high_responder": {
+      "IFN_response_threshold": {
+        "mean": 0.6,
+        "std": 0.2
+      }
+    },
+    "low_responder": {
+      "IFN_response_threshold": {
+        "mean": 1.8,
+        "std": 0.3
+      }
+    }
+  }
+}

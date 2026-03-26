@@ -1,0 +1,18 @@
+{
+  "node_id": "NFkB",
+  "module": "inflammation",
+  "category": "signal",
+  "node_type": "transcription_factor",
+  "state_class": "transient",
+
+  "inputs": ["viral_sensor", "TNF_receptor", "stress"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [1.0, 0.8, -0.7]
+  },
+
+  "baseline": 0.1,
+  "decay_tau": 3.0
+}

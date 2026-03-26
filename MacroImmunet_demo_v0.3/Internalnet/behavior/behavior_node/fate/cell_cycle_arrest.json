@@ -1,0 +1,40 @@
+{
+  "behavior_id": "cell_cycle_arrest",
+
+  "group": "fate_execution",
+
+  "gates": [
+    { "node": "DNA_damage", "threshold": 0.3 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "DNA_damage", "weight": 0.6 },
+      { "node": "stress", "weight": 0.4 }
+    ]
+  },
+
+  "activation": {
+    "mode": "probabilistic",
+    "threshold": 0.4,
+    "slope": 5.0
+  },
+
+  "cell_influence": {
+    "sensitivity_param": "checkpoint_sensitivity",
+    "capacity_param": "control_capacity"
+  },
+
+  "hir_interaction": {
+    "use_global_scale": true,
+    "use_modifier": true,
+    "blockable": true
+  },
+
+  "output": {
+    "type": "state_change",
+    "target": "cell_cycle_arrest",
+    "intensity_source": "drive"
+  }
+}

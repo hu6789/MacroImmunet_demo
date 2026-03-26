@@ -1,0 +1,38 @@
+{
+  "behavior_id": "apoptosis_commit",
+  "group": "fate_execution",
+  "category": "fate_related",
+
+  "gate": [
+    { "node": "damage", "threshold": 0.4 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "damage", "weight": 0.5 },
+      { "node": "caspase", "weight": 0.5 }
+    ]
+  },
+
+  "activation": {
+    "mode": "deterministic",
+    "threshold": 0.6
+  },
+
+  "cell_influence": {
+    "sensitivity_param": "death_sensitivity"
+  },
+
+  "hir_interaction": {
+    "use_global_scale": false,
+    "use_modifier": false,
+    "blockable": false
+  },
+
+  "output": {
+    "type": "fate_signal",
+    "target": "apoptosis",
+    "intensity_source": "drive"
+  }
+}

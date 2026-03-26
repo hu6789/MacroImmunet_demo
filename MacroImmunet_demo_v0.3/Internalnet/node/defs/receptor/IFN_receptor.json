@@ -1,0 +1,18 @@
+{
+  "node_id": "IFN_receptor",
+  "module": "antiviral",
+  "category": "receptor",
+  "node_type": "receptor",
+  "state_class": "transient",
+
+  "inputs": ["IFN_external"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [1.0]
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 3.0
+}

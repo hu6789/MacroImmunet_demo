@@ -1,0 +1,33 @@
+{
+  "behavior_id": "repair_program",
+  "group": "stress_response",
+
+  "gate": [
+    { "node": "damage", "threshold": 0.3 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "damage", "weight": 0.7 },
+      { "node": "stress", "weight": 0.3 }
+    ]
+  },
+
+  "activation": {
+    "mode": "probabilistic",
+    "threshold": 0.4,
+    "slope": 4.0
+  },
+
+  "hir_interaction": {
+    "use_global_scale": true,
+    "use_modifier": true,
+    "blockable": false
+  },
+
+  "state_effects": {
+    "damage": -0.05,
+    "ATP": -0.02
+  }
+}

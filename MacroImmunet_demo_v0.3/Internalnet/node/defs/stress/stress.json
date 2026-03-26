@@ -1,0 +1,18 @@
+{
+  "node_id": "stress",
+  "module": "stress",
+  "category": "stress",
+  "node_type": "stress_signal",
+  "state_class": "stock",
+
+  "inputs": ["ROS", "viral_RNA", "translation_stress"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [0.3, 0.2, 0.5]
+    },
+
+  "baseline": 0.0,
+  "decay_tau": 8.0
+}

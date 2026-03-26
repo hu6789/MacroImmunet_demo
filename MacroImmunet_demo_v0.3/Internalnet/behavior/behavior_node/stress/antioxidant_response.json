@@ -1,0 +1,41 @@
+{
+  "behavior_id": "antioxidant_response",
+  "group": "stress_response",
+  "category": "stress_response",
+
+  "gate": [
+    { "node": "ROS", "threshold": 0.25 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "ROS", "weight": 1.0 }
+    ]
+  },
+
+  "activation": {
+    "mode": "probabilistic",
+    "threshold": 0.4,
+    "slope": 3.0
+  },
+
+  "cell_influence": {
+    "sensitivity_param": "ROS_sensitivity"
+  },
+
+  "hir_interaction": {
+    "use_global_scale": true,
+    "use_modifier": true,
+    "blockable": false
+  },
+  "state_effects": {
+    "ROS": -0.05,
+    "stress": -0.02
+  },
+  "output": {
+    "type": "internal_state",
+    "target": "ROS_clearance",
+    "intensity_source": "drive"
+  }
+}

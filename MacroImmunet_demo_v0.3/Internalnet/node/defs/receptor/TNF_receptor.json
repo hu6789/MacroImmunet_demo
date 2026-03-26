@@ -1,0 +1,18 @@
+{
+  "node_id": "TNF_receptor",
+  "module": "inflammation",
+  "category": "receptor",
+  "node_type": "receptor",
+  "state_class": "transient",
+
+  "inputs": ["TNF_external"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [1.0]
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 3.0
+}

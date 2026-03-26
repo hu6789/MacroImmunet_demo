@@ -1,0 +1,44 @@
+{
+  "behavior_id": "autophagy",
+  "group": "stress_response",
+  "category": "stress_response",
+
+  "gate": [
+    { "node": "stress", "threshold": 0.3 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "stress", "weight": 0.6 },
+      { "node": "autophagy_signal", "weight": 0.4 }
+    ]
+  },
+
+  "activation": {
+    "mode": "probabilistic",
+    "threshold": 0.45,
+    "slope": 3.5
+  },
+
+  "cell_influence": {
+    "sensitivity_param": "stress_sensitivity"
+  },
+
+  "hir_interaction": {
+    "use_global_scale": true,
+    "use_modifier": true,
+    "blockable": false
+  },
+  "state_effects": {
+    "damage": -0.03,
+    "stress": -0.02,
+    "ATP": -0.01
+  },
+
+  "output": {
+    "type": "internal_state",
+    "target": "autophagy_level",
+    "intensity_source": "drive"
+  }
+}

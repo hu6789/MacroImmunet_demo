@@ -1,0 +1,94 @@
+{
+ "nodes":[
+
+  "ATP",
+  "translation_capacity",
+  "translation_stress",
+
+  "viral_RNA",
+  "viral_sensor",
+  "IRF3",
+  "NFkB",
+  "IFN_signal",
+  "STAT1",
+  "ISG_program",
+
+  "TNF_signal",
+  "inflammation_signal",
+
+  "ROS",
+  "stress",
+  "mitochondrial_stress",
+  "ER_stress",
+  "UPR_program",
+  "autophagy_signal",
+
+  "damage",
+  "DNA_damage",
+  "repair_program",
+
+  "caspase",
+  "apoptosis_drive",
+  "necrosis_signal",
+
+  "cell_shutdown",
+  "exhaustion",
+  
+  "IFN_receptor",
+  "TNF_receptor"
+ ],
+
+ "edges":[
+
+  ["ATP","translation_capacity"],
+  ["ATP","translation_stress"],
+
+  ["translation_capacity","ER_stress"],
+
+  ["viral_RNA","viral_sensor"],
+  ["viral_RNA","ROS"],
+
+  ["viral_sensor","IRF3"],
+  ["viral_sensor","NFkB"],
+  ["viral_sensor","viral_RNA"],
+
+  ["IRF3","IFN_signal"],
+  ["NFkB","IFN_signal"],
+
+  ["IFN_receptor","STAT1"],
+  ["STAT1","ISG_program"],
+
+  ["TNF_receptor","NFkB"],
+  ["NFkB","TNF_signal"],
+  ["NFkB","inflammation_signal"],
+
+  ["ROS","stress"],
+  ["ROS","damage"],
+  ["stress","damage"],
+  ["viral_RNA","damage"],
+  ["ROS","mitochondrial_stress"],
+  
+  ["stress","translation_capacity"],
+  ["stress","NFkB"],
+  ["stress","IRF3"],
+  ["stress","caspase"],
+  ["stress","exhaustion"],
+
+  ["mitochondrial_stress","autophagy_signal"],
+
+  ["damage","DNA_damage"],
+  ["DNA_damage","repair_program"],
+
+  ["DNA_damage","apoptosis_drive"],
+  ["caspase","apoptosis_drive"],
+
+  ["damage","necrosis_signal"],
+
+  ["translation_stress","cell_shutdown"],
+  ["ER_stress","UPR_program"],
+  ["ER_stress","cell_shutdown"],
+
+  ["UPR_program","exhaustion"]
+
+ ]
+}

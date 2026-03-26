@@ -1,0 +1,18 @@
+{
+  "node_id": "autophagy_signal",
+  "module": "stress",
+  "category": "response",
+  "node_type": "protective_program",
+  "state_class": "transient",
+
+  "inputs": ["mitochondrial_stress"],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [1.0]
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 5.0
+}

@@ -1,0 +1,15 @@
+{
+  "behaviors": [
+    "cytokine/secrete_IFN.json",
+    "cytokine/secrete_TNF.json",
+    "cytokine/secrete_IL6.json",
+    "stress/autophagy.json",
+    "stress/antioxidant_response.json",
+    "stress/UPR_response.json",
+    "metabolism/translation_slowdown.json",
+    "metabolism/glycolysis_upregulation.json",
+    "fate/apoptosis_commit.json",
+    "fate/cell_cycle_arrest.json",
+    "fate/necrosis.json"
+  ]
+}

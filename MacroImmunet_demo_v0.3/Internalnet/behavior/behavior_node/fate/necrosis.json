@@ -1,0 +1,46 @@
+{
+  "behavior_id": "necrosis",
+
+  "group": "fate_execution",
+
+  "gate": [
+    { "node": "damage", "threshold": 0.5 },
+    { "node": "stress", "threshold": 0.5 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "damage", "weight": 0.7 },
+      { "node": "ROS", "weight": 0.3 }
+    ]
+  },
+
+  "activation": {
+    "mode": "probabilistic",
+    "threshold": 0.05,
+    "slope": 3.0
+  },
+
+  "cell_influence": {
+    "sensitivity_param": "death_sensitivity",
+    "capacity_param": "execution_capacity"
+  },
+
+  "hir_interaction": {
+    "use_global_scale": true,
+    "use_modifier": true,
+    "blockable": false
+  },
+  "state_effects": {
+    "damage": 0.15,
+    "stress": 0.1,
+    "ATP": -0.2
+  },
+
+  "output": {
+    "type": "fate",
+    "target": "necrosis",
+    "intensity_source": "drive"
+  }
+}

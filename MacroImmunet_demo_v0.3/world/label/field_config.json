@@ -1,0 +1,17 @@
+{
+  "IFN": {
+    "half_life": 3
+  },
+  "IL6": {
+    "half_life": 5
+  },
+  "TNF": {
+    "half_life": 2
+  },
+  "damage": {
+    "half_life": -1
+  },
+  "virus": {
+    "half_life": -1
+  }
+}

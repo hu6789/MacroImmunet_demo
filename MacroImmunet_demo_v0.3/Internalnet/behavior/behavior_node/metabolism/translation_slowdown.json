@@ -1,0 +1,39 @@
+{
+  "behavior_id": "translation_slowdown",
+  "group": "metabolism",
+  "category": "metabolism",
+
+  "gate": [
+    { "node": "stress", "threshold": 0.2 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "stress", "weight": 0.6 },
+      { "node": "translation_stress", "weight": 0.4 }
+    ]
+  },
+
+  "activation": {
+    "mode": "deterministic",
+    "threshold": 0.5,
+    "slope": 3.0
+  },
+
+  "cell_influence": {
+    "sensitivity_param": "translation_sensitivity"
+  },
+
+  "hir_interaction": {
+    "use_global_scale": true,
+    "use_modifier": true,
+    "blockable": false
+  },
+
+  "output": {
+    "type": "internal_state",
+    "target": "translation_rate",
+    "intensity_source": "drive"
+  }
+}

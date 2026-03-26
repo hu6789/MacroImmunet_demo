@@ -1,0 +1,40 @@
+{
+  "behavior_id": "glycolysis_upregulation",
+
+  "group": "metabolism",
+
+  "gates": [
+    { "node": "stress", "threshold": 0.2 }
+  ],
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "stress", "weight": 0.5 },
+      { "node": "TNF_signal", "weight": 0.5 }
+    ]
+  },
+
+  "activation": {
+    "mode": "probabilistic",
+    "threshold": 0.4,
+    "slope": 4.0
+  },
+
+  "cell_influence": {
+    "sensitivity_param": "metabolic_flexibility",
+    "capacity_param": "metabolic_capacity"
+  },
+
+  "hir_interaction": {
+    "use_global_scale": true,
+    "use_modifier": true,
+    "blockable": false
+  },
+
+  "output": {
+    "type": "internal",
+    "target": "ATP_boost",
+    "intensity_source": "drive"
+  }
+}

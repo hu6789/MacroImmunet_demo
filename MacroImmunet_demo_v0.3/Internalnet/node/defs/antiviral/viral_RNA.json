@@ -1,0 +1,18 @@
+{
+  "node_id": "viral_RNA",
+  "module": "antiviral",
+  "category": "viral",
+  "node_type": "viral_load",
+  "state_class": "stock",
+
+  "inputs": ["ROS", "viral_sensor"],
+
+  "update_rule": "external",
+
+  "params": {
+    "weights": [0.7, 0.5]
+  },
+
+  "baseline": 0.0,
+  "decay_tau": 8.0
+}
