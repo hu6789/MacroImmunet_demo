@@ -1,0 +1,27 @@
+{
+  "node_id": "activation_signal",
+  "functional_group": "activation",
+  "structural_type": "internal",
+  "node_type": "signal_integration",
+  "io_role": "internal",
+  "external_key": null,
+  "state_class": "transient",
+  "hir_role": "gate",
+  "inputs": [
+    { "node": "TCR_receptor", "weight": 1.0 },
+    { "node": "costim_signal", "weight": 1.0 }
+  ],
+  "update_rule": "weighted_sum",
+  "params": {
+    "weights": [1.0, 1.0],
+    "mode": "all"
+  },
+  "activation": {
+    "type": "threshold",
+    "threshold": 0.1,
+    "mode": "binary",
+    "logic": "all"
+  },
+  "baseline": 0.0,
+  "decay": { "tau": 2.0, "mode": "exponential" }
+}

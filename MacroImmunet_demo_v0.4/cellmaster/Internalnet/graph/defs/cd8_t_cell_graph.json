@@ -1,0 +1,38 @@
+{
+  "graph_id": "cd8_t_cell_graph",
+
+  "nodes": [
+    {"node_id": "TCR_receptor", "type": "receptor"},
+    {"node_id": "costim_signal", "type": "receptor"},
+    {"node_id": "IFN_receptor", "type": "receptor"},
+
+    {"node_id": "activation_signal", "type": "internal"},
+    {"node_id": "cytotoxic_program", "type": "internal"},
+    {"node_id": "IFN_production", "type": "internal"}
+  ],
+
+  "behaviors": [
+    {"behavior_id": "activation_program"},
+    {"behavior_id": "kill_target"},
+    {"behavior_id": "secrete_IFN"},
+    {"behavior_id": "costim_signal_boost"}
+  ],
+
+  "edges": [
+
+    {"type": "node-node", "source": "TCR_receptor", "target": "activation_signal", "weight": 1.0},
+    {"type": "node-node", "source": "costim_signal", "target": "activation_signal", "weight": 0.8},
+
+    {"type": "node-node", "source": "IFN_receptor", "target": "activation_signal", "weight": 0.4},
+
+    {"type": "node-node", "source": "activation_signal", "target": "cytotoxic_program", "weight": 1.0},
+
+    {"type": "node-node", "source": "activation_signal", "target": "IFN_production", "weight": 0.7},
+
+
+    {"type": "node-behavior", "source": "activation_signal", "target": "activation_program"},
+    {"type": "node-behavior", "source": "cytotoxic_program", "target": "kill_target"},
+    {"type": "node-behavior", "source": "IFN_production", "target": "secrete_IFN"},
+    {"type": "node-behavior", "source": "activation_signal", "target": "costim_signal_boost"}
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "behavior_id": "costim_signal_boost",
+
+  "functional_group": "activation",
+
+  "required_capability": null,
+  "allowed_cell_types": ["cd8_t_cell"],
+
+  "gate": [
+    { "node": "costim_signal", "threshold": 0.1, "mode": "any" }
+  ],
+  "gate_logic": "any",
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "costim_signal", "weight": 1.0 }
+    ],
+    "normalize": true
+  },
+
+  "activation": {
+    "mode": "deterministic",
+    "threshold": 0.3,
+    "probability": 1.0,
+    "slope": 4.0
+  },
+
+  "hir_interaction": {
+    "blockable": true,
+    "scalable": true,
+    "modifiable": true
+  },
+
+  "effect_scope": "internal",
+
+  "output": {
+    "type": "internal_state",
+    "target": "self",
+    "intent_type": null,
+    "field": null,
+    "intensity_source": "drive",
+    "value": 1.0,
+    "merge_mode": "add",
+    "state_effects": {
+      "ATP": -0.01,
+      "stress": 0.01,
+      "damage": 0.0
+    }
+  }
+}

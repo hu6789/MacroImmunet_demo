@@ -1,0 +1,48 @@
+{
+  "behavior_id": "kill_target",
+
+  "functional_group": "effector",
+
+  "required_capability": "cytotoxic",
+  "allowed_cell_types": ["cd8_t_cell"],
+
+  "gate": [],
+  "gate_logic": "all",
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "cytotoxic_program", "weight": 0.7 },
+      { "node": "activation_signal", "weight": 0.3 }
+    ],
+    "normalize": true
+  },
+
+  "activation": {
+    "mode": "deterministic",
+    "threshold": 0.0
+  },
+
+  "hir_interaction": {
+    "blockable": true,
+    "scalable": true,
+    "modifiable": true
+  },
+
+  "effect_scope": "external",
+
+  "output": {
+    "type": "intent",
+    "target": "selected_target",
+    "intent_type": "damage_cell",
+    "field": null,
+    "intensity_source": "drive",
+    "value": 1.0,
+    "merge_mode": "add",
+    "state_effects": {
+      "ATP": -0.05,
+      "stress": 0.05,
+      "damage": 1.0
+    }
+  }
+}

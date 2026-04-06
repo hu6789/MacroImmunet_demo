@@ -1,0 +1,27 @@
+{
+  "node_id": "ATP",
+  "functional_group": "metabolism",
+  "structural_type": "internal",
+  "node_type": "energy_stock",
+  "io_role": "internal",
+  "external_key": null,
+  "state_class": "stable",
+  "hir_role": "input",
+  "inputs": [],
+  "update_rule": "direct_input",
+  "params": {
+    "weights": [],
+    "mode": "any"
+  },
+  "activation": {
+    "type": "none",
+    "threshold": 0.0,
+    "mode": "continuous",
+    "logic": "any"
+  },
+  "baseline": 1.0,
+  "decay": {
+    "tau": 10.0,
+    "mode": "exponential"
+  }
+}

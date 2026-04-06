@@ -1,0 +1,27 @@
+{
+  "graph_id": "infected_cell_graph",
+
+  "nodes": [
+    {"node_id": "viral_RNA", "type": "internal"},
+    {"node_id": "IFN_receptor", "type": "receptor"},
+    {"node_id": "IFN_production", "type": "internal"}
+  ],
+
+  "behaviors": [
+    {"behavior_id": "viral_replication"},
+    {"behavior_id": "secrete_IFN"}
+  ],
+
+  "edges": [
+
+    {"type": "node-behavior", "source": "viral_RNA", "target": "viral_replication"},
+    {"type": "node-behavior", "source": "stress", "target": "secrete_IFN"},
+
+    {"type": "node-node", "source": "ATP", "target": "viral_RNA", "weight": 0.5},
+
+    {"type": "node-node", "source": "viral_RNA", "target": "ROS", "weight": 0.6},
+    {"type": "node-node", "source": "viral_RNA", "target": "ER_stress", "weight": 0.6},
+
+    {"type": "node-node", "source": "IFN_receptor", "target": "viral_RNA", "weight": -0.8}
+  ]
+}

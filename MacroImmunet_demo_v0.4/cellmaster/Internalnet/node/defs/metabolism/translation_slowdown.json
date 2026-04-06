@@ -1,0 +1,30 @@
+{
+  "node_id": "translation_slowdown",
+  "functional_group": "metabolism",
+  "structural_type": "internal",
+  "node_type": "translation_regulator",
+  "io_role": "internal",
+  "external_key": null,
+  "state_class": "accumulative",
+  "hir_role": "input",
+  "inputs": [
+    { "node": "stress", "weight": 1.0 },
+    { "node": "viral_RNA", "weight": 1.0 }
+  ],
+  "update_rule": "weighted_sum",
+  "params": {
+    "weights": [1.0, 1.0],
+    "mode": "any"
+  },
+  "activation": {
+    "type": "threshold",
+    "threshold": 0.3,
+    "mode": "continuous",
+    "logic": "any"
+  },
+  "baseline": 1.0,
+  "decay": {
+    "tau": 5.0,
+    "mode": "exponential"
+  }
+}

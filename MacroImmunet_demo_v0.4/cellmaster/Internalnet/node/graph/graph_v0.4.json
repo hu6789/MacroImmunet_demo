@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    "activation_signal",
+    "costim_signal",
+    "cytotoxic_program",
+
+    "ATP",
+    "glycolysis_upregulation",
+    "translation_slowdown",
+
+    "viral_replication",
+
+    "ROS",
+    "ER_stress",
+    "stress",
+    "autophagy_signal",
+
+    "damage",
+    "apoptosis_drive",
+    "necrosis_signal",
+    "cell_shutdown",
+
+    "TCR_receptor",
+    "IFN_receptor",
+    "pMHC",
+    "costim_receptor"
+  ],
+
+  "edges": [
+
+    {"from": "TCR_receptor", "to": "activation_signal", "weight": 1.0},
+    {"from": "pMHC", "to": "activation_signal", "weight": 1.0},
+
+    {"from": "costim_receptor", "to": "costim_signal", "weight": 1.0},
+
+    {"from": "activation_signal", "to": "cytotoxic_program", "weight": 1.0},
+    {"from": "costim_signal", "to": "cytotoxic_program", "weight": 0.8},
+
+    {"from": "ATP", "to": "cytotoxic_program", "weight": 0.5},
+
+    {"from": "viral_replication", "to": "ROS", "weight": 0.6},
+    {"from": "viral_replication", "to": "ER_stress", "weight": 0.6},
+
+    {"from": "IFN_receptor", "to": "viral_replication", "weight": -0.8},
+
+    {"from": "ROS", "to": "stress", "weight": 0.5},
+    {"from": "ER_stress", "to": "stress", "weight": 0.5},
+
+    {"from": "stress", "to": "autophagy_signal", "weight": 0.6},
+
+    {"from": "ROS", "to": "damage", "weight": 0.7},
+    {"from": "ER_stress", "to": "damage", "weight": 0.7},
+    {"from": "stress", "to": "damage", "weight": 0.5},
+    {"from": "viral_replication", "to": "damage", "weight": 0.4},
+
+    {"from": "damage", "to": "apoptosis_drive", "weight": 1.0},
+    {"from": "damage", "to": "necrosis_signal", "weight": 1.0},
+    {"from": "damage", "to": "cell_shutdown", "weight": 0.8},
+
+    {"from": "glycolysis_upregulation", "to": "ATP", "weight": 0.6},
+
+    {"from": "stress", "to": "glycolysis_upregulation", "weight": 0.5},
+
+    {"from": "stress", "to": "translation_slowdown", "weight": 0.7},
+    {"from": "viral_replication", "to": "translation_slowdown", "weight": 0.5},
+
+    {"from": "translation_slowdown", "to": "cytotoxic_program", "weight": -0.5}
+
+  ]
+}

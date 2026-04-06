@@ -1,0 +1,21 @@
+{
+  "node_id": "pMHC",
+  "functional_group": "antigen",
+  "structural_type": "internal",
+  "node_type": "MHC_class_I",
+  "io_role": "emitter",
+  "external_key": null,
+  "state_class": "transient",
+  "hir_role": "reference",
+  "inputs": [
+    { "node": "viral_RNA", "weight": 1.0 }
+  ],
+  "update_rule": "weighted_sum",
+  "params": {
+    "weights": [1.0],
+    "mode": "any"
+  },
+  "activation": { "type": "none" },
+  "baseline": 0.0,
+  "decay": { "tau": 4.0, "mode": "exponential" }
+}

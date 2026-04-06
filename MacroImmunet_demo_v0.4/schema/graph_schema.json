@@ -1,0 +1,19 @@
+{
+  "graph_id": "string",
+  "description": "可选描述该信号/行为图用途",
+  "nodes": ["node_id1", "node_id2", "..."],
+
+  "edges": [
+    {
+      "source": "node_id",
+      "target": "node_id | behavior_id",
+      "type": "node-node | node-behavior",
+      "weight": 1.0,              // 信号影响权重（用于 drive 加权）
+      "gate_effect": false,         // true 表示作为 gate 信号
+      "role": "gate",
+      "threshold": 0.3
+    }
+  ],
+
+  "default_drive_normalize": true
+}

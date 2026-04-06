@@ -1,0 +1,31 @@
+{
+  "node_id": "damage",
+  "functional_group": "fate",
+  "structural_type": "internal",
+  "node_type": "damage_accumulator",
+  "io_role": "internal",
+  "external_key": null,
+  "state_class": "accumulative",
+  "hir_role": "gate",
+  "inputs": [
+    { "node": "ROS", "weight": 1.0 },
+    { "node": "ER_stress", "weight": 1.0 },
+    { "node": "viral_RNA", "weight": 0.5 }
+  ],
+  "update_rule": "weighted_sum",
+  "params": {
+    "weights": [1.0, 1.0, 0.5],
+    "mode": "any"
+  },
+  "activation": {
+    "type": "threshold",
+    "threshold": 0.5,
+    "mode": "continuous",
+    "logic": "any"
+  },
+  "baseline": 0.0,
+  "decay": {
+    "tau": 5.0,
+    "mode": "exponential"
+  }
+}

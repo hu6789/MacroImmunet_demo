@@ -1,0 +1,18 @@
+{
+  "pMHC_signal": {
+    "node": "TCR_receptor",
+    "type": "linear",
+    "scale": 1.0
+  },
+  "IFN_external": {
+    "node": "IFN_receptor",
+    "type": "hill",
+    "K": 0.5,
+    "n": 2
+  },
+  "costim_external": {
+  "node": "costim_receptor",
+  "type": "linear",
+  "scale": 1.0
+  }
+}

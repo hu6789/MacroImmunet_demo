@@ -1,0 +1,19 @@
+{
+  "node_id": "IFN_receptor",
+  "functional_group": "receptor",
+  "structural_type": "receptor",
+  "node_type": "cytokine_receptor",
+  "io_role": "sensor",
+  "external_key": "IFN_external",
+  "state_class": "transient",
+  "hir_role": "input",
+  "inputs": [],
+  "update_rule": "direct_input",
+  "params": {
+    "weights": [],
+    "mode": "any"
+  },
+  "activation": { "type": "none" },
+  "baseline": 0.0,
+  "decay": { "tau": 2.0, "mode": "exponential" }
+}

@@ -1,0 +1,62 @@
+{
+  "cell_type": "infected_cell",
+
+  "graph": {
+    "base": "base_cell_graph",
+    "specific": "infected_cell_graph"
+  },
+
+  "init_node_state": {
+    "activation_signal": { "mean": 1.0, "std": 0.1 },
+    "viral_RNA": { "mean": 0.5, "std": 0.1 },
+    "stress": { "mean": 0.2, "std": 0.05 },
+    "damage": { "mean": 0.0, "std": 0.02 },
+    "ATP": { "mean": 0.6, "std": 0.05 },
+    "pMHC": { "mean": 0.8, "std": 0.05 }
+  },
+
+  "state_flags": {
+    "alive": true
+  },
+
+  "state": {
+    "labels": [],
+    "fate": "normal"
+  },
+
+  "capability": {
+    "can_replicate_virus": true
+  },
+
+  "feature_params": {
+    "activation_signal": 2.0
+  },
+
+  "hir_params": {
+    "energy_weight": 1.0,
+    "stress_sensitivity": 0.8,
+    "damage_sensitivity": 1.2
+  },
+
+  "receptor_params": {
+    "IFN_receptor": { "mean": 1.0, "std": 0.2 }
+  },
+
+  "behavior_params": {
+    "secrete_IFN": {
+      "threshold_shift": -0.5,
+      "sensitivity": 1.5
+    },
+    "viral_replication": {
+      "threshold_shift": -0.3,
+      "sensitivity": 1.2
+    }
+  },
+
+  "spatial": {
+    "mobility": "static",
+    "interaction_radius": 1.5
+  },
+
+  "subtypes": {}
+}

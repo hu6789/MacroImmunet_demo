@@ -1,0 +1,21 @@
+{
+  "node_id": "viral_replication",
+  "functional_group": "viral",
+  "structural_type": "internal",
+  "node_type": "replication",
+  "io_role": "internal",
+  "external_key": null,
+  "state_class": "accumulative",
+  "hir_role": "input",
+  "inputs": [
+    { "node": "viral_RNA", "weight": 1.0 }
+  ],
+  "update_rule": "weighted_sum",
+  "params": {
+    "weights": [1.0],
+    "mode": "any"
+  },
+  "activation": { "type": "none" },
+  "baseline": 0.2,
+  "decay": { "tau": 8.0, "mode": "exponential" }
+}

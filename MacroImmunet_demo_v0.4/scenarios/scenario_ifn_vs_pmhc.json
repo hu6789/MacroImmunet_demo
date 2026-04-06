@@ -1,0 +1,25 @@
+{
+  "name": "ifn_vs_pmhc",
+  "steps": 6,
+
+  "world": {
+    "width": 5,
+    "height": 5
+  },
+
+  "field_defs": {
+    "IFN_external": {
+      "diffusion": 0.1,
+      "decay_tau": 5
+    }
+  },
+
+  "cells": [
+    {"type": "cd8_t_cell", "position": [2, 1]},
+    {"type": "infected_cell", "position": [2, 2]}
+  ],
+
+  "fields": {
+    "IFN_external": [[2, 2, 0.5]]
+  }
+}

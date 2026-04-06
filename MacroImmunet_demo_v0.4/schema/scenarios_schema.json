@@ -1,0 +1,24 @@
+{
+  "name": "...",
+  "steps": 6,
+
+  "world": {
+    "width": 7,
+    "height": 7
+  },
+
+  "field_configs": {
+    "IFN_external": {
+      "decay_tau": 5.0
+    }
+  },
+
+  "cells": [
+    {
+      "type": "cd8_t_cell",
+      "position": [x, y]
+    }
+  ],
+
+  "fields": {}
+}

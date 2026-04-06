@@ -1,0 +1,49 @@
+{
+  "graph_id": "base_cell_graph",
+
+  "nodes": [
+    {"node_id": "ATP", "type": "internal", "hir_role": "input"},
+    {"node_id": "stress", "type": "internal", "hir_role": "input"},
+    {"node_id": "damage", "type": "internal", "hir_role": "input"},
+
+    {"node_id": "ROS", "type": "internal"},
+    {"node_id": "ER_stress", "type": "internal"},
+    {"node_id": "autophagy_signal", "type": "internal"},
+
+    {"node_id": "glycolysis_upregulation", "type": "internal"},
+    {"node_id": "translation_slowdown", "type": "internal"},
+
+    {"node_id": "apoptosis_drive", "type": "internal", "hir_role": "reference"},
+    {"node_id": "necrosis_signal", "type": "internal"},
+    {"node_id": "cell_shutdown", "type": "internal"}
+  ],
+
+  "behaviors": [
+    {"behavior_id": "stress_response"},
+    {"behavior_id": "damage_response"},
+    {"behavior_id": "glycolysis_upregulation"},
+    {"behavior_id": "apoptosis_commit"}
+  ],
+
+  "edges": [
+
+    {"type": "node-node", "source": "ROS", "target": "stress", "weight": 0.5},
+    {"type": "node-node", "source": "ER_stress", "target": "stress", "weight": 0.5},
+
+    {"type": "node-node", "source": "stress", "target": "autophagy_signal", "weight": 0.6},
+
+    {"type": "node-node", "source": "ROS", "target": "damage", "weight": 0.7},
+    {"type": "node-node", "source": "ER_stress", "target": "damage", "weight": 0.7},
+    {"type": "node-node", "source": "stress", "target": "damage", "weight": 0.5},
+
+    {"type": "node-node", "source": "damage", "target": "apoptosis_drive", "weight": 1.0},
+    {"type": "node-node", "source": "damage", "target": "necrosis_signal", "weight": 1.0},
+    {"type": "node-node", "source": "damage", "target": "cell_shutdown", "weight": 0.8},
+
+    {"type": "node-node", "source": "glycolysis_upregulation", "target": "ATP", "weight": 0.6},
+
+    {"type": "node-node", "source": "stress", "target": "glycolysis_upregulation", "weight": 0.5},
+
+    {"type": "node-node", "source": "stress", "target": "translation_slowdown", "weight": 0.7}
+  ]
+}

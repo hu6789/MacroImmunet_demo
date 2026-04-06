@@ -1,0 +1,31 @@
+{
+  "node_id": "string",
+  "functional_group": "activation | metabolism | effector | secretion | fate_execution",
+  "structural_type": "receptor | ligand | internal",
+  "node_type": "string",
+  "io_role": "sensor | emitter | internal",
+  "external_key": "string | null",
+  "state_class": "transient | stable | accumulative",
+  "hir_role": "none | input | gate | reference",
+
+  "inputs": [
+    { "node": "string", "weight": 1.0 }
+  ],
+  "update_rule": "direct_input | weighted_sum | decay | nonlinear",
+  "params": {
+    "weights": [],   // 仅用于 node-node 计算公式
+    "mode": "any | all",
+    "nonlinear_exponent": 1.0
+  },
+  "activation": {
+    "type": "none | threshold",
+    "threshold": 0.0,  // cell json 可覆盖
+    "mode": "binary | continuous",
+    "logic": "any | all"
+  },
+  "baseline": 0.0,    // 可被 cell override
+  "decay": {
+    "tau": 1.0,
+    "mode": "exponential | linear | none"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "node_id": "stress",
+
+  "functional_group": "stress",
+  "structural_type": "internal",
+
+  "node_type": "stress_integrator",
+
+  "io_role": "internal",
+  "external_key": null,
+
+  "state_class": "accumulative",
+
+  "hir_role": "input",
+
+  "inputs": [
+    { "node": "ROS", "weight": 0.5 },
+    { "node": "ER_stress", "weight": 0.5 }
+  ],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [],
+    "mode": "any"
+  },
+
+  "activation": {
+    "type": "threshold",
+    "threshold": 0.4,
+    "mode": "continuous",
+    "logic": "any"
+  },
+
+  "baseline": 0.1,
+
+  "decay": {
+    "tau": 5.0,
+    "mode": "exponential"
+  }
+}

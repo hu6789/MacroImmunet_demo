@@ -1,0 +1,31 @@
+{
+  "name": "ifn_gradient",
+  "steps": 8,
+
+  "world": {
+    "width": 7,
+    "height": 7
+  },
+  "field_configs": {
+    "IFN_external": {
+      "decay_tau": 5.0
+    }
+  },
+
+  "field_defs": {
+    "IFN_external": {
+      "diffusion": 0.2,
+      "decay_tau": 6
+    }
+  },
+
+  "cells": [
+    {"type": "cd8_t_cell", "position": [2, 2]},
+    {"type": "cd8_t_cell", "position": [4, 4]},
+    {"type": "infected_cell", "position": [3, 3]}
+  ],
+
+  "fields": {
+    "IFN_external": [[3, 3, 1.0]]
+  }
+}

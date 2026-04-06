@@ -1,0 +1,61 @@
+{
+  "cell_type": "cd8_t_cell",
+
+  "graph": {
+    "base": "base_cell_graph",
+    "specific": "cd8_t_cell_graph"
+  },
+
+  "init_node_state": {
+    "activation_signal": { "mean": 0.0, "std": 0.05 },
+    "cytotoxic_program": { "mean": 0.1, "std": 0.05 },
+    "ATP": { "mean": 0.6, "std": 0.05 },
+    "stress": { "mean": 0.1, "std": 0.05 },
+    "TCR_receptor": { "mean": 0.0, "std": 0.1 }
+  },
+
+  "state_flags": {
+    "alive": true,
+    "activated": false,
+    "exhausted": false
+  },
+
+  "state": {
+    "labels": [],
+    "fate": "normal"
+  },
+
+  "capability": {
+    "cytotoxic_capacity": 1.0
+  },
+
+  "feature_params": {
+    "TCR_match": 1.0,
+    "energy_from_ATP": { "mean": 1.0, "std": 0.1 },
+    "stress_sensitivity": { "mean": 0.8, "std": 0.2 }
+  },
+
+  "receptor_params": {
+    "pMHC_signal": { "mean": 1.0, "std": 0.3 }
+  },
+
+  "behavior_params": {
+    "kill_target": {
+      "threshold_shift": -0.2,
+      "sensitivity": 1.5
+    }
+  },
+
+  "subtypes": {
+    "high_affinity": {
+      "receptor_params": {
+        "pMHC_signal": { "mean": 1.5, "std": 0.2 }
+      }
+    },
+    "low_affinity": {
+      "receptor_params": {
+        "pMHC_signal": { "mean": 0.6, "std": 0.2 }
+      }
+    }
+  }
+}

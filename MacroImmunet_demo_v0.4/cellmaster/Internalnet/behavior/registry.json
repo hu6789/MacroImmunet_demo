@@ -1,0 +1,13 @@
+{
+  "behaviors": [
+    "activation_program",
+    "costim_signal_boost",
+    "viral_replication",
+    "secrete_IFN",
+    "glycolysis_upregulation",
+    "stress_response",
+    "damage_response",
+    "kill_target",
+    "apoptosis_commit"
+  ]
+}

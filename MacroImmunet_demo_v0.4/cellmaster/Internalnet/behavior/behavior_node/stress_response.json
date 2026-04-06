@@ -1,0 +1,51 @@
+{
+  "behavior_id": "stress_response",
+
+  "functional_group": "metabolism",
+
+  "required_capability": null,
+  "allowed_cell_types": ["cd8_t_cell", "infected_cell"],
+
+  "gate": [
+    { "node": "stress", "threshold": 0.3, "mode": "any" }
+  ],
+  "gate_logic": "any",
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "stress", "weight": 1.0 }
+    ],
+    "normalize": true
+  },
+
+  "activation": {
+    "mode": "deterministic",
+    "threshold": 0.3,
+    "probability": 1.0,
+    "slope": 4.0
+  },
+
+  "hir_interaction": {
+    "blockable": true,
+    "scalable": true,
+    "modifiable": true
+  },
+
+  "effect_scope": "internal",
+
+  "output": {
+    "type": "internal_state",
+    "target": "self",
+    "intent_type": null,
+    "field": null,
+    "intensity_source": "drive",
+    "value": 1.0,
+    "merge_mode": "add",
+    "state_effects": {
+      "ATP": -0.01,
+      "stress": 0.05,
+      "damage": -0.02
+    }
+  }
+}

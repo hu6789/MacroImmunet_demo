@@ -1,0 +1,36 @@
+{
+  "name": "force_kill",
+  "steps": 6,
+
+  "world": {
+    "width": 5,
+    "height": 5
+  },
+
+  "field_defs": {
+    "IFN_external": {
+      "diffusion": 0.0,
+      "decay_tau": 10
+    },
+    "costim_external": {
+      "diffusion": 0.0,
+      "decay_tau": 10
+    }
+  },
+
+  "cells": [
+    {"type": "cd8_t_cell", "position": [2, 1]},
+    {"type": "infected_cell", "position": [2, 2]}
+  ],
+
+  "fields": {
+    "IFN_external": [
+      [2, 2, 1.0],
+      [2, 1, 1.0]
+    ],
+    "costim_external": [
+      [2, 1, 1.0],
+      [2, 2, 1.0]
+    ]
+  }
+}

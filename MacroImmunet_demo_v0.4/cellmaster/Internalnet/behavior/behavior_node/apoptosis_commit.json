@@ -1,0 +1,51 @@
+{
+  "behavior_id": "apoptosis_commit",
+
+  "functional_group": "fate_execution",
+
+  "required_capability": null,
+  "allowed_cell_types": ["infected_cell"],
+
+  "gate": [
+    { "node": "damage", "threshold": 0.7, "mode": "all" }
+  ],
+  "gate_logic": "all",
+
+  "drive": {
+    "type": "weighted_sum",
+    "inputs": [
+      { "node": "damage", "weight": 1.0 }
+    ],
+    "normalize": false
+  },
+
+  "activation": {
+    "mode": "deterministic",
+    "threshold": 0.7,
+    "probability": 1.0,
+    "slope": 6.0
+  },
+
+  "hir_interaction": {
+    "blockable": false,
+    "scalable": false,
+    "modifiable": false
+  },
+
+  "effect_scope": "internal",
+
+  "output": {
+    "type": "fate",
+    "target": "self",
+    "intent_type": "die",
+    "field": null,
+    "intensity_source": "constant",
+    "value": 1.0,
+    "merge_mode": "set",
+    "state_effects": {
+      "ATP": -0.5,
+      "stress": 0.5,
+      "damage": 1.0
+    }
+  }
+}

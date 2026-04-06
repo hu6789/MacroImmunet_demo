@@ -1,0 +1,49 @@
+{
+  "cell_type": "string",
+  "graph_id": "string",
+  "init_node_state": {
+    "activation_signal": 0.0,
+    "ATP": 0.6,
+    "stress": 0.1
+  },
+  "state_flags": {
+    "alive": true,
+    "activated": false,
+    "exhausted": false
+  },
+  "state": {
+    "labels": [],
+    "fate": "normal"
+  },
+  "capability": {},
+  "feature_params": {
+    "param_name": { "mean": 1.0, "std": 0.1, "dist": "normal" }
+  },
+  "hir_params": {
+    "energy_weight": 1.0,
+    "stress_sensitivity": 1.0,
+    "damage_sensitivity": 1.0
+  },
+  "receptor_params": {
+    "IFN_external": { "mean": 1.0, "std": 0.2 }
+  },
+  "behavior_params": {
+    "kill_target": { "threshold_shift": -0.2, "sensitivity": 1.5 }
+  },
+  "node_overrides": {
+    "IFN_production": { "enabled": false },
+    "IFN_receptor": { "baseline": 0.0, "decay_tau": 2.0 }
+  },
+  "required_nodes": ["activation_signal","ATP","stress"],
+  "forbidden_nodes": ["IFN_production"],
+  "spatial": {
+    "mobility": "static",
+    "move_speed": 0.0,
+    "interaction_radius": 2.0
+  },
+  "subtypes": {
+    "high_affinity": {
+      "behavior_params": { "kill_target": { "threshold_shift": -0.1 } }
+    }
+  }
+}

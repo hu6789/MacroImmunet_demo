@@ -1,0 +1,48 @@
+{
+  "behavior_id": "string",
+  "functional_group": "activation | metabolism | effector | secretion | fate_execution",
+  "required_capability": "string | null",
+  "allowed_cell_types": ["string"],
+
+  "gate": [
+    { "node": "string", "threshold": 0.0, "mode": "any | all" }
+  ],
+  "gate_logic": "all | any",
+
+  "drive": {
+    "type": "weighted_sum | product | max",
+    "inputs": [
+      { "node": "string", "weight": 1.0 }
+    ],
+    "normalize": true
+  },
+
+  "activation": {
+    "mode": "deterministic | stochastic",
+    "threshold": 0.0,   // cell override
+    "probability": 1.0,
+    "slope": 4.0
+  },
+
+  "hir_interaction": {
+    "blockable": true,
+    "scalable": true,
+    "modifiable": true
+  },
+
+  "effect_scope": "internal | external",
+  "output": {
+    "type": "internal_state | intent | field | fate",
+    "target": "self | selected_target | none",
+    "intent_type": "damage_cell | add_field | move | divide | die",
+    "field": "string",
+    "intensity_source": "drive | constant",
+    "value": 1.0,
+    "merge_mode": "add | set | multiply",
+    "state_effects": {
+      "ATP": 0.0,
+      "stress": 0.0,
+      "damage": 0.0
+    }
+  }
+}

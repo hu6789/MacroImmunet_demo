@@ -1,0 +1,31 @@
+{
+  "activation": [
+    "activation_program",
+    "costim_signal_boost"
+  ],
+
+  "metabolism": [
+    "glycolysis_upregulation"
+  ],
+
+  "stress_response": [
+    "stress_response",
+    "damage_response"
+  ],
+
+  "secretion": [
+    "secrete_IFN"
+  ],
+
+  "effector": [
+    "kill_target"
+  ],
+
+  "fate_execution": [
+    "apoptosis_commit"
+  ],
+
+  "viral": [
+    "viral_replication"
+  ]
+}

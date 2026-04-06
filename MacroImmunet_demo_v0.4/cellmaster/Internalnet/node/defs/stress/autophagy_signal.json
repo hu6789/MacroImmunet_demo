@@ -1,0 +1,41 @@
+{
+  "node_id": "autophagy_signal",
+
+  "functional_group": "stress",
+  "structural_type": "internal",
+
+  "node_type": "stress_response",
+
+  "io_role": "internal",
+  "external_key": null,
+
+  "state_class": "transient",
+
+  "hir_role": "reference",
+
+  "inputs": [
+    { "node": "stress", "weight": 0.7 },
+    { "node": "ROS", "weight": 0.3 }
+  ],
+
+  "update_rule": "weighted_sum",
+
+  "params": {
+    "weights": [],
+    "mode": "any"
+  },
+
+  "activation": {
+    "type": "threshold",
+    "threshold": 0.4,
+    "mode": "continuous",
+    "logic": "any"
+  },
+
+  "baseline": 0.0,
+
+  "decay": {
+    "tau": 3.0,
+    "mode": "exponential"
+  }
+}

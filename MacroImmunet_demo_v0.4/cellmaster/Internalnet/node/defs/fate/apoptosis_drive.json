@@ -1,0 +1,31 @@
+{
+  "node_id": "apoptosis_drive",
+  "functional_group": "fate",
+  "structural_type": "internal",
+  "node_type": "apoptosis_regulator",
+  "io_role": "internal",
+  "external_key": null,
+  "state_class": "accumulative",
+  "hir_role": "gate",
+  "inputs": [
+    { "node": "stress", "weight": 1.0 },
+    { "node": "ROS", "weight": 1.0 },
+    { "node": "ER_stress", "weight": 1.0 }
+  ],
+  "update_rule": "weighted_sum",
+  "params": {
+    "weights": [1.0, 1.0, 1.0],
+    "mode": "any"
+  },
+  "activation": {
+    "type": "threshold",
+    "threshold": 0.5,
+    "mode": "continuous",
+    "logic": "any"
+  },
+  "baseline": 0.0,
+  "decay": {
+    "tau": 3.0,
+    "mode": "exponential"
+  }
+}

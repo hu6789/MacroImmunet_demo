@@ -1,0 +1,30 @@
+{
+  "node_id": "cell_shutdown",
+  "functional_group": "fate",
+  "structural_type": "internal",
+  "node_type": "shutdown_controller",
+  "io_role": "internal",
+  "external_key": null,
+  "state_class": "accumulative",
+  "hir_role": "gate",
+  "inputs": [
+    { "node": "exhaustion", "weight": 1.0 },
+    { "node": "stress", "weight": 1.0 }
+  ],
+  "update_rule": "weighted_sum",
+  "params": {
+    "weights": [1.0, 1.0],
+    "mode": "any"
+  },
+  "activation": {
+    "type": "threshold",
+    "threshold": 0.6,
+    "mode": "continuous",
+    "logic": "any"
+  },
+  "baseline": 0.0,
+  "decay": {
+    "tau": 3.0,
+    "mode": "exponential"
+  }
+}

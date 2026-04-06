@@ -1,0 +1,13 @@
+{
+  "world": {"width": 5, "height": 5},
+
+  "field_defs": {
+    "IFN_external": {"diffusion": 0.2, "decay_tau": 5}
+  },
+
+  "cells": [
+    {"type": "infected_cell", "position": [2, 2]}
+  ],
+
+  "fields": {}
+}
